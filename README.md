@@ -1,6 +1,6 @@
 # Vorlesungsmitschriften
 
-Sammlung von Vorlesungsmitschriften, die ich über die Jahre getippt habe. 
+Sammlung von Vorlesungsmitschriften, die ich über die Jahre getippt habe. Für handschriftliche Notizen siehe [hier](https://koebii.github.io//Stuff.md).
 
 ### FS 2022
 - [Wahrscheinlichkeitstheorie](https://koebii.github.io//Wahrscheinlichkeitstheorie.pdf). Elementary probability theory. Sequences of independent random variables and introduction to stochastic processes (Markov chains). Notes are in English
