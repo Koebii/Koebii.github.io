@@ -5,7 +5,7 @@
   #pad(x: -1.2cm, y: -0.75cm)[
     #image("Unibaslogo.svg", height: 1cm)
   ]
-     #h(1fr) *Vorlesung: Stochastische Prozesse*    
+     #h(1fr) *Vorlesung: Topologie*    
     #line(length: 100%)
 ]
 )
