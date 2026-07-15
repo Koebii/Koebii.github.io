@@ -1,0 +1,2265 @@
+%% !TeX document-id = {6d8cadbe-138a-4466-a80c-e6c9488c725b}
+%% !TeX TXS-program:compile = txs:///pdflatex/[--shell-escape]
+%
+%
+%\def\myjobname{EidT, Stand 8. Februar 2025}
+%
+%\ifx\conditionmacro\undefined
+%\immediate\write18{%
+%	pdflatex --jobname="\myjobname"
+%	"\gdef\string\conditionmacro{1}\string\input\space\jobname"
+%}%
+%\expandafter\stop
+%\fi
+
+
+\documentclass[
+12pt, 
+openany, 
+a4paper, 
+%draft,
+final,
+fleqn, 
+]{myclass}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+
+\usepackage{amsmath, amsfonts, amssymb, amsthm} % typical math packages
+\usepackage[margin=2.75cm]{geometry} % set wider margins
+\usepackage{mathtools, thmtools}
+\usepackage{hyperref}
+
+\usepackage{enumitem}
+
+\usepackage{csquotes}
+\usepackage{ stmaryrd }
+\usepackage{tikz-cd} % for commutative diagramms
+
+\usepackage{ifdraft} % to detect when final option is on
+
+% \swapnumbers
+
+% Links to external documents
+\ifoptionfinal{
+\usepackage[backend=biber]{biblatex}
+\addbibresource{Bibliography/Bibliography.bib}
+\DeclareFieldFormat{prefixnumber}{\mkbibbold{#1}}
+\DeclareFieldFormat{labelnumber}{\mkbibbold{#1}}
+
+\AtBeginBibliography{%
+\DeclareFieldFormat{prefixnumber}{#1}%
+\DeclareFieldFormat{labelnumber}{#1}}
+}{}
+
+\hypersetup{
+colorlinks=true,
+linkcolor=blue!50!black, 
+urlcolor=red!50!black, 
+citecolor=purple!50!black,
+pdfauthor=David Flückiger, 
+pdfkeywords={Mathematics, Topology, Pure Maths}, 
+pdftitle=Einführung in die Topologie, 
+}
+
+% Theorems
+\numberwithin{equation}{chapter}
+\numberwithin{section}{chapter}
+
+\declaretheorem[style=definition, name=Definition, sharenumber=equation]{defn}
+\declaretheorem[style=remark, sharenumber=equation, name=Beispiel]{eg}
+\declaretheorem[style=remark, sharenumber=equation, name=Bemerkung]{rmk}
+\declaretheorem[style=plain, sharenumber=equation, name=Satz]{thr}
+\declaretheorem[style=plain, sharenumber=equation, name=Lemma]{lem}
+\declaretheorem[style=plain, sharenumber=equation, name=Korollar]{cor}
+\declaretheorem[style=plain, sharenumber=equation, name=Behauptung]{prop}
+\declaretheorem[style=definition, sharenumber=equation, name=Übung]{ex}
+\declaretheorem[style=definition, sharenumber=equation, name=Notation]{notat}
+
+
+\newcounter{step}
+\AtBeginEnvironment{proof}{\setcounter{step}{0}}
+\newenvironment{step}[1][]{\refstepcounter{step}
+\par
+\textit{Schritt \thestep: #1}
+}{}
+
+\usepackage{cleveref}
+\Crefname{defn}{Definition}{Definitionen}
+\Crefname{eg}{Beispiel}{Beispiele}
+\Crefname{rmk}{Bemerkung}{Bemerkungen}
+\Crefname{thr}{Satz}{Sätze}
+\Crefname{lem}{Lemma}{Lemmata}
+\Crefname{cor}{Korollar}{Korollare}
+\Crefname{prop}{Behauptung}{Behauptungen}
+\Crefname{ex}{Übung}{Übungen}
+\Crefname{notat}{Notation}{Notation}
+
+% personal macros
+\newcommand{\NN}{\mathbb N}
+\newcommand{\ZZ}{\mathbb Z}
+\newcommand{\QQ}{\mathbb Q}
+\newcommand{\RR}{\mathbb R}
+\newcommand{\CC}{\mathbb C}
+\newcommand{\Ss}{\mathbb S}
+\newcommand{\DD}{\mathbb D}
+
+\newcommand{\varE}{\mathcal E}
+\newcommand{\varF}{\mathcal F}
+\newcommand{\varI}{\mathcal I}
+\newcommand{\varJ}{\mathcal J}
+\newcommand{\varM}{\mathcal M}
+\newcommand{\varS}{\mathcal S}
+\newcommand{\varT}{\mathcal T}
+\newcommand{\varZ}{\mathcal Z}
+
+\newcommand{\powerset}[1]{\mathcal P\left(#1\right)}
+\newcommand{\union}{\bigcup}
+\newcommand{\intersect}{\bigcap}
+\newcommand{\implication}[2]{\glqq {#1}$\implies${#2}\grqq}
+\newcommand{\doubleimplication}[2]{\glqq {#1}$\iff${#2}\grqq}
+\newcommand{\reverseimplication}[2]{\glqq {#1}$\impliedby${#2}\grqq}
+\newcommand{\closure}[1]{\overline{#1}}
+\newcommand{\interior}[1]{\mathring{#1}}
+\newcommand{\eval}[1]{\left. \vphantom{\int}#1\right\lvert}
+\newcommand{\embed}{\hookrightarrow}
+\newcommand{\set}[2]{\left\{#1\;\middle|\;#2\right\}}
+
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\abb}{Abb}
+\DeclareMathOperator{\mor}{Mor}
+\DeclareMathOperator{\obj}{Obj}
+\DeclareMathOperator{\Homeo}{Homeo}
+
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclarePairedDelimiter{\scalar}{\langle}{\rangle}
+
+\newcommand{\todo}[1]{}
+\newcommand{\TFAE}{Die folgenden Aussagen sind äquivalent}
+\newcommand{\hint}[1]{\newline\noindent\underline{Hinweis}: #1}
+
+
+
+% Packages for Working
+
+\usepackage{pdfpages}
+
+
+\usepackage{xcolor}
+\usepackage{showlabels}
+\renewcommand{\showlabelfont}{\sffamily\color{gray}}
+\ifoptionfinal{}{\renewcommand{\todo}[1]{{\color{red}[Todo: #1]}}}
+
+\ifoptionfinal{}{
+\newcommand{\printbibliography}{}
+\newcommand{\bibfont}{}
+\renewcommand{\cite}[2][]{}
+}
+
+
+
+\title{Einführung in die Topologie\\Vorlesung von I. van Santen\pagenumbering{arabic}}
+\author[D. Flückiger]
+{Mitschrift von David Flückiger und Kim Schaffner}
+\date{Stand: \today}
+\email{\href{mailto:david.flueckiger@stud.unibas.ch?subject=EidT, Stand \today}{david.flueckiger@stud.unibas.ch}}
+
+
+
+\begin{document}
+
+\includepdf[pages=-]{syb.pdf}
+\ifoptionfinal{}{\texttt{EidT, Stand \today}}
+
+
+\makeatletter
+\begin{center}
+	{{\huge{\@title}}}\\[3.5mm]
+	\Large{Notizen von D.F.\\ Stand: \today.}
+\end{center}
+\makeatother
+\vspace{0.5cm}
+\thispagestyle{empty}
+\begin{center}
+	{\large\bf Vorwort}
+\end{center}
+\vspace{1mm}
+Dies sind die Notizen zu der zweistündigen Vorlesung \glqq Einführung in die Topologie\grqq. Die Vorlesung basiert auf folgender Literatur, wobei \cite{laures_grundkurs_2023}\nocite{*} als Hauptquelle diente. 
+\vspace{5pt}
+\begingroup
+\let\clearpage\relax
+\renewcommand*{\bibfont}{\footnotesize}
+\printbibliography[heading=none]
+\endgroup
+\vspace{1cm}
+{
+\color{red}
+\noindent\textbf{Bemerkung: }Diese Notizen sind nicht fertig. Insbesondere fehlt das letzte Kapitel
+über die Fundamentalgruppen und in Abschnitt 1.4. müssen die Grafiken angepasst
+werden.
+
+}
+\tableofcontents
+\chapter{Grundbegriffe der Topologie}
+\section{Metrische Räume}
+Topologische Räume sind stellen eine Verallgemeinerung von metrischen Räumen dar. Wir werden daher zuerst die Grundlagen metrischer Räume behandeln, um nachher eine Brücke zu den topologischen Räumen schlagen zu können. 
+\begin{defn}\label{1.1}
+Sei $X$ eine Menge. Wir nennen eine Funktion $d: X\times X \to \RR$ \emph{Metrik} oder \emph{Distanz}, falls sie folgende Eigenschaften erfüllt: 
+\begin{enumerate}[label=(M\arabic*)]
+\item $d(x, y) \geq 0$ und $d(x, y) = 0$ impliziert $x=y$ für alle $x, y\in X$
+
+\item Symmetrie: $d(x, y) = d(y, x)$ für alle $x, y\in X$.
+
+\item Dreiecksungleichung: Für jeweils drei Punkte $x, y, z\in X$ gilt stets
+\[
+d(x, z) \leq d(x, y) + d(y, z).
+\]
+Ist $d$ eine Metrik auf $X$, so nennen wir das Paar $(X, d)$ \emph{metrischen Raum}.
+\end{enumerate}
+\end{defn}
+
+\begin{eg}\label{1.2}
+\begin{enumerate}[label=(\arabic*)]
+\item Auf $\RR$ ist $d(x, y) := \abs{x-y}$ eine Distanz. 
+
+\item Jede Norm $\norm{\cdot}$ auf $\RR^n$ liefert einen Distanzbegriff durch $d(x, y) := \norm{x-y}$ (siehe unten).
+
+\item Sei $M$ eine Menge. Wir können dann die \emph{diskrete Metrik} durch 
+\[
+d_{\operatorname{diskret}}(x, y) := 
+\begin{cases}
+0,& x=y, \\
+1, & x\neq y
+\end{cases}
+\]
+definieren.
+\end{enumerate}
+\end{eg}
+\begin{rmk}
+In metrischen Räumen gilt die umgekehrte Dreiecksungleichung d.h. es gilt
+\[
+\abs{d(x, y) - d(y, z)} \leq d(x, z) \quad \text{für alle }x, y, z\in X, 
+\]
+wobei $X$ ein metrischer Raum ist. 
+\end{rmk}
+\begin{defn}\label{1.4}
+Sei $V$ ein $\CC$-Vektor-Raum. Eine Abbildung $\norm{\cdot}: V\times V \to \RR$ heißt \emph{Norm}, falls sie die folgenden Eigenschaften erfüllt: Für alle $v, w \in V$ gilt
+\begin{enumerate}[label=(N\arabic*)]
+\item $\norm{v} \geq 0$ und falls $\norm v = 0 $ ist $v=0$; 
+
+\item $\norm{\lambda v} = \abs \lambda \norm v$ für alle $\lambda \in \CC$ und 
+
+\item $\norm{v+w} \leq \norm v + \norm w$. 
+\end{enumerate}
+Das Paar $(V, \norm{\cdot})$ heißt \emph{normierter Raum}. 
+\end{defn}
+\begin{rmk}
+Durch $d(x, y):= \norm{x-y}$ definiert jede Norm eine Metrik. 
+\end{rmk}
+
+\begin{eg}\label{1.6}
+Sei $I\subseteq \RR$ ein Intervall und sei 
+\[
+\varF_b(I) := \set{f: I\to \mathbb{R}}{f \text{ beschränkt}}.
+\]
+Dann ist $\varF_b$ mit der Norm $\norm f_{L^\infty} = \sup_{x\in I}\abs{f(x)}$ ein normierter Vektorraum (sogar ein Banachraum). 
+\end{eg}
+\begin{defn}\label{1.7}
+Seien $X, Y$ metrische Räume und $f: X\to Y$ eine Funktion und $x\in X$. $f$ heißt \emph{stetig} in $x\in X$, falls für jedes $\varepsilon>0$ finden wir $\delta>0$ sodass 
+\[
+d_Y(f(x), f(y)) <\varepsilon \quad \text{für alle $y\in X$ mit $d(x, y) < \delta$. }
+\]
+Die Funktion $f$ heißt (global) stetig, falls sie an jedem Punkt $x\in X$ stetig ist. 
+\end{defn}
+\begin{defn}\label{1.8}
+
+Sei $X$ ein metrischer Raum. Wir nennen eine Menge $U\subseteq X$ eine \emph{$\varepsilon$-Umgebung} von einem Punkt $x\in X$, falls $B_\varepsilon(x) \subseteq U$, wobei 
+\[
+B_\varepsilon(x) := B^{X}_{\varepsilon}(x):= \set{y\in X}{ d(x, y) <\varepsilon}.
+\]
+
+Die Menge $U$ heißt Umgebung von $x$, falls es ein $\varepsilon>0$ mit $B_\varepsilon(x) \subseteq U$ gibt.
+\end{defn}
+
+\begin{thr}\label{1.9}
+Seien $X, Y$ metrische Räume und $f: X\to Y$ und sei $x\in X$ Dann sind folgende Aussagen äquivalent: 
+\begin{enumerate}[label=(\textit{\roman*})]
+\item\label{1.9,i} $f$ ist stetig in $x$; 
+\item\label{1.9,ii} Das Urbild einer jeder Umgebung von $f(x)$ ist eine Umgebung von $x$. 
+\end{enumerate}
+\end{thr}
+\begin{figure}
+\includegraphics[page=1, width=0.6\textwidth, trim = 98 227 102 120, clip]{Figures/Topologie_Grafiken.pdf}
+\caption{Illustration von \Cref{1.9}}
+\end{figure}
+\begin{proof}
+\implication{\ref{1.9,i}}{\ref{1.9,ii}}: Sei $f$ stetig in $x$ und sei $U$ eine Umgebung von $f(x)$. Dann finden wir $\varepsilon>0$ sodass $ B^{Y}_{\varepsilon}(f(x))\subseteq U $. Nach der Definition der Stetigkeit finden wir ein $\delta>0$, sodass $ f[B^{X}_{\delta}(x)] \subseteq B^{Y}_{\varepsilon}(f(x))$. Nach Anwenden von $ f^{-1} $ folgt
+\[ 
+B^{X}_{\delta}(x) \subseteq f^{-1}\bigg[f[B^{X}_{\delta}(x)]\bigg] \subseteq f^{-1}[B^{Y}_{\varepsilon}(f(x))]\subseteq f^{-1}[U], 
+\]
+d.h. $f^{-1}[U]$ ist eine Umgebung von $x$. 
+
+\implication{\ref{1.9,ii}}{\ref{1.9,i}}:  Sei $\varepsilon>0$. Dann ist $ f^{-1}[B^{Y}_{\varepsilon}(f(x))] $ eine Umgebung von $x$, d.h. wir finden $\delta>0$ sodass $B_{\delta}(x) \subseteq f^{-1}[B^{Y}_{\varepsilon}(f(x))]$. Das bedeutet dann aber
+\[ 
+d_{Y}(f(x), f(y)) < \varepsilon, \quad \text{für alle $y\in X$ mit }d_{X}(x, y) < \delta. 
+\]
+Da $\varepsilon>0$ arbiträr war, entspricht dies genau der Definition von Stetigkeit. 
+\end{proof}
+
+\begin{defn}\label{1.10}
+
+
+Sei $X$ ein metrischer Raum. Eine Menge $U\subseteq X$ heißt \emph{offen}, wenn sie Umgebung von jedem $x\in U$ ist. Die Menge heißt \emph{abgeschlossen}, falls ihr Komplement $A^\complement := X\setminus A$ offen ist. 
+\end{defn}
+\begin{ex}
+Zeigen Sie: Der offene Ball $B_\varepsilon(x)$ ist offen für jedes $x\in X$. 
+\end{ex}
+\begin{defn}
+sei $X$ ein metrischer Raum und $(x_n)_{n\in \NN}\in X^\NN$ eine Folge. Wir sagen, dass die Folge $x_n$ gegen $x\in X$ konvergiert, falls jede Umgebung von $x$ alle Folgenglieder bis auf endlich viele (fast alle) enthält. Wir schreiben dann
+\[
+\lim_{n\to +\infty} x_n = x.
+\]
+\end{defn}
+\begin{thr}\label{1.11}
+Seien $X, Y$ metrische Räume und $f: X\to Y$ eine Funktion. {\TFAE}: 
+\begin{enumerate}
+\item $f$ ist stetig; 
+\item Für alle $U\subseteq Y$ offen ist $f^{-1}[U]\subseteq X$ offen; 
+\item Für alle $A\subseteq Y$ abgeschlossen ist $f^{-1}[A] \subseteq X$ abgeschlossen; 
+\item Für alle $x\in X$ und jede Folge $x_n\in X$ mit $\lim_{n\to + \infty} x_n = x$ gilt 
+\[
+\lim_{n\to +\infty} f(x_n) = f(x).
+\]
+\end{enumerate}
+\end{thr}
+\begin{ex}
+Zeigen Sie \Cref{1.11}. 
+\end{ex}
+
+\begin{eg}\label{1.13}
+Der Raum $ (\varF_b(I), \norm{\cdot}_{L^{\infty}}) $ aus \Cref{1.6} hat als Konvergenzbegriff die gleichmäßige Konvergenz (Konvergenz in $ L^{\infty} $).
+\end{eg}
+\begin{eg}\label{1.14}
+Wir betrachten $X:= \mathbb{R}\times \{1\} \cup \mathbb{R}\times\{2\}\subseteq \RR^2$ und definieren eine Äquivalenzrelation durch 
+\[ 
+\sim := \set{
+\big((t, i), (s, i)\big)\in X\times X}{ t= s \neq 0 \text{ oder } t=s, i=j
+}.
+\]
+Für $ x=(t, i)\in X $ ist die Äquivalenzklasse von $x$
+\[
+[x]_{\sim} =
+\begin{cases}
+\{(t, 1), (t, 2)\},  & \text{falls }t\neq 0; \\
+\{(0,i)\} & \text{falls }t=0.
+\end{cases}
+\]
+In einem metrischen Raum $Y$ kann man jeweils zwei Punkte $y_1 \neq y_2 \in Y$ durch disjunkte Umgebungen trennen. 
+
+Hätte nun $X/\sim$ eine Metrik, sodass die kanonische Projektion $\pi: X\to X/\sim$ stetig wäre, dann fänden wir disjunkte Umgebungen von $ U_{i} $ von $[(0,i)]_{\sim}$ für $ i=1,2 $. Wäre nun $ \pi $ stetig, dann wären also $ \pi^{-1}[U_{i}] $ disjunkte Umgebungen von $ (0,i) $ für $ i=1,2 $. \todo{Das Beispiel muss noch mal überarbeitet werden.}
+\end{eg}
+
+\paragraph{Motivation für topologische Räume.} Auf dem Raum $ \varF_{b}(I) $ gibt es verschiedene Konvergenzbegriffe, z.B. punktweise Konvergenz. Man kann weiter zeigen, dass es \emph{keine} Metrik gibt, welche die punktweise Konvergenz induziert. Der Grund ist, dass dieser Raum dann nicht dem ersten Abzählbarkeitsaxiom entspricht, was ein notwendiges Kriterium für die Metrisierbarkeit ist (siehe \Cref{1.22}).
+
+Wir wollen im folgenden auch Aussagen für Räume, die nicht metrisierbar sind treffen. Dafür werden wir im nächsten Abschnitt topologische Räume einführen.
+
+\section{Toplogische Räume}
+Wir starten mit der Definition einer Topologie: 
+\begin{defn}\label{1.15}
+Sei $X$ eine Menge. Eine Topologie auf $X$ ist $\varT \subseteq \powerset X$ mit folgenden Eigenschaften: 
+\begin{enumerate}[label=($\varT$\arabic*)]
+\item $\emptyset, X \in \varT$; 
+\item Falls $U_1, U_2 \in \varT$ ist auch $U_1 \cap U_2 \in \varT$; 
+\item Für eine beliebige Indexmenge $I$ und $U_i\in \varT$ für alle $i\in I$ ist auch $\union_{i\in I}U_i\in \varT$.
+\end{enumerate}
+Das Paar $(X, \varT)$ heißt dann topologischer Raum und die Elemente von $\varT$ heißen offene Mengen von $X$. 
+\end{defn}
+\begin{eg}\label{1.16}
+Sei $ (X, d) $ ein metrischer Raum. Dann bildet 
+\[ 
+\varT(d) := \set{U\subseteq X}{ U \text{ offen in $X$ bez. $d$}}
+\]
+eine Topologie auf $X$. Ist $d=d_{\operatorname{diskret}}$ die diskrete Metrik, dann ist $ \{x\} $ eine offene Menge für alle $x\in X$ und $ \varT= \powerset{X} $. Wir nennen dies dann die \emph{diskrete Topologie}. Ist andererseits $ \varT = \{\emptyset, X\} $, sprechen wir von der \emph{Klumpentopologie}. 
+\end{eg}
+\begin{defn}\label{1.17}
+Sei $X$ ein topologischer Raum und $x\in X$. Dann heißt die Menge $M\subseteq X$ \emph{Umgebung von $x$}, falls es eine offenen Menge $U\subseteq X$ mit $x\in U\subseteq M$ gibt. 
+\end{defn}
+\begin{rmk}
+Eine Menge $U\subseteq X$ in einem topologischen Raum ist genau dann offen, falls Umgebung von allen ihren Punkten ist. 
+\end{rmk}
+Durch \Cref{1.9} und \Cref{1.11} inspiriert definieren wir nun folgendes: 
+\begin{defn}\label{1.18}
+Es seien $X, Y$ topologische Räume und $f: X\to Y$. Wir nennen $f$ \emph{stetig in $x$}, falls für jede Umgebung $U$ von $f(x)$, $f^{-1}[U]$ eine Umgebung von $x$ ist. 
+
+Wir nennen $f$ \emph{(global) stetig}, falls das Urbild jeder offenen Menge wieder offen ist. 
+\end{defn}
+\begin{eg}\label{1.19}
+Sei $X= \RR \times \{1, 2\} \subseteq \RR^2$. Wir definieren durch 
+\[
+(t, i) \sim (s, j) : \iff \begin{cases}
+t=s \neq 0 & \text{oder}\\
+t=s, i=j.  
+\end{cases}
+\]eine Äquivalenzrelation auf $X$. Sei $\pi: X \to X / \sim$, $x\mapsto [x]$ die Projektion auf die Äquivalenzklassen. Können wir eine Topologie auf ${X/\sim}$ definieren, sodass $\pi$ stetig ist? Offensichtlich könnten wir die Klumpentopologie wählen, dann ist jede Funktion $f: X\to {X/\sim}$ stetig. Allerdings können wir auch 
+\[
+\set{U \subseteq {X/\sim}}{\pi^{-1}[U]\subseteq X \text{ offen}}
+\]
+als solche Topologie wählen. Später werden wir diese Topologie \emph{co-induzierte Topologie von $\pi$} nennen.
+\end{eg}
+\begin{defn}\label{1.20}
+Sei $X$ eine Menge und $\varT_i$ $i=1,2$ Topologien. $\varT_2$ heißt feiner als $\varT_1$ bzw. $\varT_1$ heißt gröber als $\varT_2$, falls $\varT_1 \subseteq \varT_2$. 
+\end{defn}
+In \Cref{1.19} ist $\varT $ die feinste Topologie auf der Quotientenmenge sodass die Projektion $\pi$ stetig ist. 
+\begin{rmk}\label{1.20.5}
+$\varT_2$ ist genau dann feiner als $\varT_1$, (d.h. $\varT_1 \subseteq \varT_2$) wenn die Identitätsabbildung $\id:(X, \varT_2) \to (X, \varT_1)$ stetig ist. 
+\end{rmk}
+\begin{defn}\label{1.21}
+Ein topologischer Raum heißt \emph{metrisierbar}, falls es eine Metrik gibt, die Topologie auf dem Raum induziert. 
+\end{defn}
+\begin{rmk}\label{1.22}
+Sei $(X, \varT)$ ein topologischer Raum. 
+\begin{enumerate}
+\item Ein notwendiges Kriterium für die Metrisierbarkeit ist das sogenannte \emph{erste Abzählbarkeitsaxiom} d.h. für jedes $x\in X$ existiert eine höchstens abzählbare Menge von Umgebungen $\mathcal U(x)$ sodass für jede Umgebung $V$ von $x$ finden wir $U\in \mathcal U(x) $ sodass $U \subseteq V$. 
+
+\item Ein hinreichendes Kriterium für die Metrisierbarkeit ist das sogenannte \emph{zweite Abzählbarkeitsaxiom} d.h. es existierte eine höchstens abzählbare Menge $\mathcal B \subseteq \varT $ sodass für alle $U\in \varT $ gibt es $\mathcal I \subseteq \mathcal B$, sodass $U = \union_{K\in \mathcal I} K$. Dieser Satz heißt Satz von Bing-Nagata-Smirnow. Ein Beweis davon findet der geneigte Leser in \cite{munkres_topology_2021}.
+
+\item Eine Folge $(x_n)_{n\in\NN}$ in $X$ konvergiert gegen $x\in X$, falls jede Umgebung von $x$ fast alle Folgenglieder enthält (man nennt $x$ dann auch \emph{Limespunkt} von $ (x_{n})_{n\in \NN} $). Man bemerke aber, dass der Grenzwert einer solchen Folge nun nicht mehr zwingend eindeutig ist. Nimmt man z.B. $X=\{0, 1\}$, $\varT = \{\emptyset, X\}$ und 
+\[
+x_i = \begin{cases}
+0, & \text{falls $i$ gerade,}\\
+1, & \text{falls $i$ ungerade,}
+\end{cases}
+\]
+dann gilt $x_i \to 0$ aber auch $x_i \to 1$. 
+
+\item Analog wie oben kann man auch Folgenstetigkeit für Funktionen $f: X\to Y$ ($Y$ ein topologischer Raum) definieren. Allerdings ist dieser Begriff dann schwächer als die Stetigkeit. Falls der Raum $X$ aber das erste Abzählbarkeitsaxiom erfüllt, dann stimmen die Begriffe überein. 
+\end{enumerate}
+\end{rmk}
+\begin{ex}
+Sei $X$ ein topologischer Raum der das erste Abzählbarkeitsaxiom erfüllt. Sei $f: X\to Y$ eine Funktion zwischen topologischen Räumen. Zeigen Sie, dass hier die Folgenstetigkeit und Stetigkeit äquivalent sind. 
+\end{ex}
+
+\section{Abgeschlossene Mengen}
+\begin{defn}
+Wir sagen $A\subseteq X$ ist \emph{abgeschlossen}, falls $A^\complement= X\setminus A$ offen ist. 
+\end{defn}
+Man beachte, dass abgeschlossen nicht das Gegenteil von offen ist. Es gibt auch Mengen, die weder offen noch abgeschlossen sind und Mengen die beides sind z.b. $X$ und $\emptyset$. 
+\begin{defn}
+Sei $X$ ein topologischer Raum und $M\subseteq X$. Wir definieren denn \emph{Abschluss von $M$ in $X$} durch 
+\[
+\closure{M} := \bigcap_{\substack{A \subseteq X\text {abgeschlossen}\\ M\subseteq A}} A. 
+\]
+Offensichtlich ist $\closure{M}$ eine abgeschlossene Menge. Falls $\closure M = X$ nennen wir $M$ \emph{dicht in $X$}.
+\end{defn}
+\begin{eg}\label{1.24}
+Sei $ M := \{\frac{1}{n}\}_{n\in\NN} \subseteq \RR$. Dann ist $ A:=\closure{M} = M\cup \{0\} $, denn die Menge
+\[
+A^{\complement} = (-\infty, 0) \cup \union_{n\in \NN}\left(\frac{1}{n+1}, \frac{1}{n}\right) \cup (1, +\infty)
+\]
+ist offen in $ \RR $, was $ \closure{M} \subseteq A $ zeigt. Wäre nun $ 0\in A^{\complement} $, dann würden wir $n\in \NN$  finden, sodass $ (-1/n, 1/n)\subseteq A^{\complement} $, weil $A^{\complement}$ offen ist. Dies ist aber ein Widerspruch. 
+\end{eg}
+\begin{rmk}
+$\closure M$ ist die kleinste abgeschlossene Menge die $M$ enthält. Ist weiter $M$ abgeschlossen, dann gilt $\closure{M} = M$, d.h. allgemein gilt $\closure{\closure{M}}= \closure{M}$.
+\end{rmk}
+\begin{defn}\label{1.25}
+Sei $X$ ein topologischer Raum und $M\subseteq X$. Wir definieren das \emph{Innere von $M$} als 
+\[
+\mathring{M} := \union_{\substack{U \subseteq X \text{ offen}\\ U \subseteq M}} U.
+\]
+Der Rand von $M$ ist gegeben durch $\partial M := \closure{M} \setminus \mathring{M}$.
+\end{defn}
+\begin{thr}\label{1.26}
+Sei $f: X \to Y$ eine Abbildung von topologischen Räumen. {\TFAE}: 
+\begin{enumerate}[label=(\arabic*)]
+\item\label{1.26, i} $f$ ist stetig; 
+\item\label{1.26, ii} Für alle $A\subseteq Y$ ist $f^{-1}[A]\subseteq X$ abgeschlossen.
+\item\label{1.26, iii} Für alle $M \subseteq X$ gilt $f[\closure M]\subseteq \closure{f[M]}$. 
+\end{enumerate}
+\end{thr}
+\begin{proof}
+\doubleimplication{\ref{1.26, i}}{\ref{1.26, ii}}: Wegen den De Morgan'schen Regeln folgt $f^{-1}[N^\complement] = f^{-1}[N]^\complement$ und die Aussage folgt nach \Cref{1.9}. 
+
+\implication{\ref{1.26, ii}}{\ref{1.26, iii}}: Sei $M \subseteq X$. Sei $A\subseteq Y$ abgeschlossen sodass $f[M]\subseteq A$. Weil das Bilden des Abschlusses inklusionserhaltend ist und $f^{-1}[A]$ abgeschlossen, folgt $\closure{M} \subseteq f^{-1}[A]$ also $f[\closure{M}]\subseteq A$. Da $A\supseteq f[M]$ arbiträr war, folgt die Behauptung. 
+
+\implication{\ref{1.26, iii}}{\ref{1.26, ii}}: Sei $A\subseteq Y$ abgeschlossen. Wir setzen $M:= f^{-1}[A]\subseteq X$ und zeigen, dass $M$ abgeschlossen d.h. $M=\closure{M}$ ist. Per Annahme gilt nun 
+\begin{align*}
+f[\closure{M}] \subseteq \closure{f[M]} = \closure{f[f^{-1}[A]]} \subseteq \closure{A} = A
+\end{align*}
+Wenden wir $f^{-1}$ auf beiden Seiten an, folgt $\closure{M} \subseteq M$, also ist $M$ abgeschlossen. \qedhere
+\end{proof}
+
+\begin{defn}
+Sei $f: X\to Y$ eine Abbildung zwischen topologischen Räumen. $f$ heißt \emph{offen/abgeschlossen}, falls für alle $M\subseteq X$ offen/abgeschlossen gilt $f[M]\subseteq Y$ offen/abgeschlossen.
+\end{defn}
+
+
+\section{Die Kategoriensprache}
+
+Dieses Kapitel ist eine direkte Kopie von \cite{laures_grundkurs_2023}.
+Wie schon zuvor betont, wird die Klasse der topologischen Räume erst dadurch interessant, weil man zwischen je zwei topologischen Räumen die Menge der stetigen Abbildungen betrachten kann. Die folgende Notiz ergibt sich unmittelbar aus der Definition der Stetigkeit. Ihre Bedeutung ist deswegen aber nicht gering, ermöglicht sie es doch, komplizierte stetige Abbildungen aus einfachen stetigen Abbildungen zusammenzusetzen.
+
+\paragraph{Notiz.} Ist \(X\) ein topologischer Raum, so ist die Identität \(\text{id}_X : X \to X\) eine stetige Abbildung. Sind \(f : X \to Y\) und \(g : Y \to Z\) stetige Abbildungen, so ist auch die Komposition \(g \circ f : X \to Z\) stetig (siehe Abb.~\ref{fig:composition}).
+
+Mit \emph{’gelehrten’} Worten gesagt: Die Klasse der topologischen Räume bildet zusammen mit den stetigen Abbildungen zwischen ihnen eine Kategorie. In diesem Abschnitt soll erklärt werden, was das bedeutet.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[>=stealth, node distance=2.5cm]
+% Nodes
+\node (X) at (0, 0) {\(X\)};
+\node (Y) at (3, 0) {\(Y\)};
+\node (Z) at (6, 0) {\(Z\)};
+\node (W) at (6, -1.5) {\(W\)};
+\node (fpre) at (0, -1.5) {\(f^{-1}(g^{-1}(W)) = (g \circ f)^{-1}(W)\)};
+
+% Arrows
+\draw[->] (X) -- node[above] {\(f\)} (Y);
+\draw[->] (Y) -- node[above] {\(g\)} (Z);
+\draw[->] (Z) -- (W);
+\draw[->, dashed] (X) -- (fpre);
+
+% Labels
+\node at (7.5, -1.5) {\(W\)};
+\node[below right] at (3, -0.7) {\(g^{-1}(W)\)};
+\end{tikzpicture}
+\caption{Die Komposition stetiger Abbildungen ist stetig. \todo{Zeichne diese Abbildung schöner}}
+\label{fig:composition}
+\end{figure}
+
+Die Kategoriensprache eignet sich gut dazu, häufig wiederkehrende Phänomene und Konstruktionen in einen einheitlichen, konzeptionellen Rahmen zu fassen. Das Lernen der neuen Vokabeln wird sich schnell bezahlt machen.
+
+\begin{defn}
+Eine Kategorie \(\mathcal{C}\) besteht aus den folgenden Daten:
+\begin{itemize}
+\item Einer Klasse, deren Elemente \emph{Objekte} genannt werden.
+\item Für je zwei Objekte \(X\) und \(Y\) einer Menge \(\text{Mor}_\mathcal{C}(X, Y)\), deren Elemente \emph{Morphismen} genannt werden. Statt \(f \in \text{Mor}_\mathcal{C}(X, Y)\) schreibt man oft \(f : X \to Y\).
+\item Für je drei Objekte \(X\), \(Y\) und \(Z\) eine Verknüpfung:
+\[
+\text{Mor}_\mathcal{C}(Y, Z) \times \text{Mor}_\mathcal{C}(X, Y) \to \text{Mor}_\mathcal{C}(X, Z), \quad (g, f) \mapsto g \circ f,
+\]
+genannt \emph{Komposition}.
+\item Schließlich muss es zu jedem Objekt \(X\) ein Element \(\text{id}_X \in \text{Mor}_\mathcal{C}(X, X)\) geben, die Identität von \(X\).
+\end{itemize}
+
+Die einzigen Axiome, denen diese Daten genügen sollen, sind:
+\begin{enumerate}
+\item \emph{Assoziativität der Komposition:}
+\[
+h \circ (g \circ f) = (h \circ g) \circ f.
+\]
+\item \emph{Neutralität der Identitäten:}
+\[
+f \circ \text{id}_X = f = \text{id}_Y \circ f.
+\]
+\end{enumerate}
+
+\end{defn}
+Beispiele für Kategorien gibt es in Hülle und Fülle. In vielen Beispielen von Kategorien sind die Objekte Mengen \emph{mit Struktur} und die Morphismen sind die \emph{strukturerhaltenden} Abbildungen. So gibt es etwa:
+\begin{itemize}
+\item die Kategorie \textbf{Sets} der Mengen und Abbildungen,
+\item die Kategorie \textbf{Grp} der Gruppen und Gruppenhomomorphismen,
+\item die Kategorie \textbf{AbGrp} der abelschen Gruppen und ihrer Homomorphismen,
+\item und die Kategorie der Ringe und Ringhomomorphismen.
+\end{itemize}
+
+Ist \(K\) ein Körper, so gibt es die Kategorie der \(K\)-Vektorräume und \(K\)-linearen Abbildungen. Kurz gesagt: Die Algebra ist voller Kategorien. Und die Topologie beginnt damit, die Kategorie \textbf{Top} der topologischen Räume und stetigen Abbildungen zu definieren.
+
+Die algebraische Topologie beschäftigt sich unter anderem damit, diese oder ähnliche Kategorien \emph{topologischer Objekte} in Kategorien \emph{algebraischer Objekte} abzubilden, um topologische Probleme dann mit algebraischer Hilfe zu bearbeiten. Die Abbildungen zwischen Kategorien haben übrigens einen eigenen Namen: \emph{Funktoren}. Sie werden aber erst dann erklärt, wenn wir sie unbedingt brauchen.
+\begin{defn}\label{1.31} 
+Ein Isomorphismus in der Kategorie der topologischen Räume heißt \emph{Homöomorphismus}. D.h. ein Homoömorphismus ist eine bijektive stetige Funktion mit stetigem Inverse. Die Homomorphismen sind die stetigen Funktionen, deren Menge wir mit
+\[ 
+\hom(X, Y) = \set{f: X\to Y}{\text{$ f $ ist stetig}}
+\]
+bezeichnen. Die Menge der Homöomorphismen bezeichnen wir mit $ \Homeo(X, Y) $.
+\end{defn}
+
+\chapter{Universelle Konstruktionen}
+\section{Teilräume}
+
+Sei $X$ ein topologischer Raum und $f: M \to X$ eine Abbildung, wobei $M$ eine beliebige Menge ist. Welches ist die kleinste Topologie auf $M$, unter welcher $f$ stetig ist? Antwort: wir setzen 
+\begin{equation}\label{2.0}
+\mathcal I:= \set{f^{-1}[U]}{U\subseteq X \text{ offen}} \subseteq \powerset{M}.
+\end{equation}
+Es lässt sich leicht zeigen, dass $\mathcal{I}$ eine Topologie ist. 
+\begin{defn}
+Wir nennen \eqref{2.0} die \emph{von $f$ induzierte Topologie auf $M$}. Ist $M\subseteq X$ und $f:= \id_M$, dann heißt $\mathcal I$ \emph{Teilraumtopologie} auf $M$ und $(M, \mathcal{I})$ \emph{Teilraum von $X$}. Konvention: $M\subset X$ trägt \emph{immer} die Teilraumtopologie falls nichts weiter festgelegt ist. 
+\end{defn}
+
+Ist $M\subseteq X$, dann sind die offenen Mengen in der Teilraumtopologie
+\[
+\set{U\cap M}{U \text{ offen in $X$}}. 
+\]
+
+\begin{eg}\label{2.1}
+Sei $M:=[1, 2]\cup \{3\}$ ein Teilraum von $\RR$. Dann ist die Menge $\{4\}$ offen in $M$ aber nicht offen in $\RR$. 
+\end{eg}
+
+\begin{rmk}
+Sei $(X, d)$ ein metrischer Raum und sei $M\subseteq X$. Dann ist die Topologie erzeugt von $\eval{d}_{M\times M}$ genau die Teilraumtopologie der von $d$ erzeugten Topologie. Die offenen Mengen von $M$ sind dann von der Form $ U \cap M$, wobei $U\subseteq X$ offen.
+\end{rmk}
+
+\begin{defn}
+Eine Funktion $f: M \to X$ heißt \emph{Einbettung}, falls $f$ injektiv ist und $M$ die von $f$ induzierte Topologie trägt. Wir schreiben manchmal $M \embed X$ (sofern $f$ trivial ist). 
+\end{defn}
+
+\begin{rmk}
+$f:M\to X $ ist genau dann eine Einbettung, falls $f'M \to f[M]$, $m\mapsto f(m)$ ein Homöomorphismus ist (wobei $f[M]$ mit der Teilraumtopologie versehen ist). 
+\end{rmk}
+
+\begin{thr}[Universelle Eigenschaft der induzierten Topologie]\label{2.2}
+\eqref{2.0} ist die einzige Topologie auf $M$ mit folgender Eigenschaft: Für alle $g: T\to M$ stetig gilt: 
+\begin{equation}\label{2.2.1}
+\text{$g$ stetig}\iff \text{$f\circ g: T\to X$ stetig, }
+\end{equation}
+wobei $T$ ein beliebiger topologischer Raum ist. 
+\end{thr}
+
+\begin{proof}
+Sei $T$ ein topologischer Raum. 
+Wir zeigen, dass, dass $\mathcal I$ \eqref{2.2.1} erfüllt. Ist $g$ stetig, dann ist $f\circ g: T \to X$ stetig als Komposition zweier stetiger Funktionen. 
+
+Sei also $f\circ g$ stetig. Sei $A\subseteq M$ offen. Per Definition ist dann aber $A= f^{-1}[U]$ für ein offenes $U\subseteq X$. Da $f\circ g$ stetig ist, ist 
+\[
+g^{-1}[A] = g^{-1}[f^{-1}[U]] = (f \circ g)^{-1}[U] \subseteq T
+\]
+offen, daher ist $g$ stetig. 
+
+Es bleibt die Eindeutigkeit von $\mathcal I$ zu zeigen: Seien $\varT_1, \varT_2$ Topologien, die \eqref{2.2.1} erfüllen. 
+
+Setzen wir $T=M$ und betrachten die Abbildung $g:= \id: (M, \varT_i) \to (M, \varT_i)$, 
+folgt dass $f: (M, \varT_i) \to X$ für $i=1,2$ stetig ist. Setzen wir nun $\tilde g:= \id: (M, \varT_1) \to (M, \varT_2)$ und betrachten $\tilde g \circ f: (M, \varT_1) \to X$, sehen wir dass dies eine stetige Funkion, und damit nach \eqref{2.2.1} auch $\tilde g$ stetig ist. Dies zeigt $\varT_2 \subseteq \varT_1$ nach \Cref{1.20.5}. Die Umgekehrte Inklusion folgt durch Vertauschen von $\varT_1$ und $\varT_2$. 
+\end{proof}
+
+% TODO: \usepackage{graphicx} required
+\begin{figure}
+\centering
+\includegraphics[width=0.7\linewidth]{Figures/Knoten}
+\caption{Knoten sind Einbettungen von $\Ss^1$ in $\RR^3$ (meistens wird noch differenzierbar verlangt).}
+\label{2.4}
+\end{figure}
+
+
+
+\section{Produkte}
+Seien $I$ eine beliebige Indexmenge und seien $X_i$, $i\in I$ topologische Räume. Sei weiterhin $M$ eine Menge und $f_i: M \to X_i$ Funktionen. Im Allgemeinen bildet 
+\[
+\varS =\set{f^{-1}_i[U]}{U\subseteq X_i \text{ offen, $i\in I$}}
+\]
+\emph{keine} Topologie auf $M$, weil der Durchschnitt zweier und die Vereinigung beliebig vieler Elemente in $\mathcal{S}$ i.A nicht mehr in $\varS$ liegt. Wir können dem aber leicht aus dem Weg gehen indem wir 
+\begin{equation}\label{Produkttopologie}
+\varJ := \intersect_{\substack{\varT \text{ Topologie auf $ M $}\\ \varT \supseteq \varS}} \varT
+\end{equation}
+%	\begin{equation}\label{Produkttopologie}
+%		\varJ := \left\{\union_{j\in J}\intersect_{n=1}^{N}S_{i,n}	\mid N\in \NN, S_{i,n}\in \varS \forall n=1,\dots,N\forall j\in J \text{ Indexset}	\right\}.
+%	\end{equation}
+definieren. Dies ist nun eine Topologie, die aus beliebigen Vereinigungen in $ \varS $ und endlichen Durchschnitten von Mengen in $ \varS $ besteht. 
+\begin{defn}\label{2.6}
+Wir nennen $\varJ$ aus \eqref{Produkttopologie} die \emph{von den $f_i$ induzierte Produkttopologie} aus $M$. Ist $M= \prod_{i\in I} X_i$ und $f_i((x_j)_{j\in I}) = x_i$ für alle $i\in I$, dann nennen wir $\mathcal I$ die \emph{Produkttopologie}. In diese Fall nennen wir die $f_i$ \emph{kanonische Projektionen}. 
+\end{defn}
+\begin{eg}\label{2.5}
+Seien $X_1, X_2$ topologische Räume und definiere $M:= X_1 \times X_2$ und seien $f_i: M\to X_i$ die kanonischen Projektionen. Dann ist die Topologie auf $M$ durch 
+\begin{align*}
+\varJ = \set{U_{1}\times U_{2}}{U_{i}\subseteq X_{i} \text{ offen }\forall i=1, 2}
+\end{align*}
+gegeben. Analoges gilt für endliche Produkte. 
+\end{eg}
+
+\begin{rmk}
+Sei $I$ eine beliebige Indexmenge und $X_i$ topologische Räume für alle $i\in I$. Setze $X:= \prod_{i\in I} X_i$. Die kanonische Produkttopologie lässt sich dann folgendermaßen ausdrücken: 
+\begin{align*}
+\varJ
+&
+= \set{		\bigcap_{j\in J} \pi_{j}^{-1}[U_{j}]}{U_{j}\subseteq X_{j}\text{ offen }\forall j\in J, J\subseteq I\text{ endlich}}\\
+&
+= \union_{\substack{I\subseteq J\\\text{$I$ endlich}}}\set{\prod_{i\in I} U_i}{U_i\subseteq X_i \text{ offen }, X_i = U_i \forall i\notin J}.
+\end{align*}
+\end{rmk}
+
+\begin{thr}[Universelle Eigenschaft der Produkttopologie]\label{2.7}
+Die Topologie $\varJ$ (definiert durch \eqref{Produkttopologie}) ist die einzige Topologie auf $M$, die folgende Eigenschaft erfüllt: Für alle $g: T \to M$ stetig gilt 
+\begin{equation}\label{2.8}
+\text{$g$ stetig} \iff f_{i}\circ g \text{ stetig für alle $i\in I$, }
+\end{equation}
+wobei $T$ ein beliebiger topologischer Raum ist. 
+\end{thr}
+
+\begin{proof}
+Wir zeigen zuerst, dass $\varJ$ \eqref{2.8} erfüllt. 
+
+Ist $g$ stetig, dann ist auch $f_i\circ g$ stetig als Komposition stetiger Funktionen. 
+
+Sei $f_i\circ g$ stetig für alle $i$ und sei $U\subseteq M$ offen. Wegen der Konstruktion von $ \varI $ können wir $U$ als 
+\[
+U = \union_{i\in I} \intersect_{i\in I_{j}} f_{i}^{-1}[U_{i,j}]
+\]
+mit $ U_{i,j}\subseteq X_{i} $ offen und $ I_{i,j}\subseteq I $ endlichen Teilmengen. Dann ist aber
+\begin{align*}
+g^{-1}[U] 
+&
+= \union_{j\in I} \intersect_{i\in I_{j}}g^{-1}\bigg[ f_{i}^{-1}[U_{i,j}]\bigg] =  \union_{j\in I} \intersect_{i\in I_{j}} (f_{i}\circ g)^{-1}[U_{i,j}], 
+\end{align*}
+was eine offene Menge ist, wegen der angenommenen Stetigkeit von $ f_{i}\circ g $ für alle $i\in I$. Der Beweis für die Eindeutigkeit lässt sich analog zu jenem der induzierten Topologie führen.
+\end{proof}
+
+\begin{eg}\label{2.9}
+Wir betrachten $X = \prod_{i\in [0,1]} X_i$ mit $X_{i} =\RR$ für alle $i\in [0,1]$, wobei wir $X$ mit $ \abb([0,1]; \RR) $ identifizieren können. Sei $(f_{n})_{n\in \NN}$ eine Folge in $X$ und $f\in X$. Dann gilt $\lim_{n\to+\infty} f_{n} = f$ in der Produkttopologie genau dann wenn 
+\[
+\lim_{n\to+\infty}f_{n}(x) = f(x) \quad \text{für jedes }x\in [0,1]. 
+\]
+\end{eg}
+
+\begin{ex}
+Weisen Sie nach, dass die Behauptung aus \Cref{2.9} auch wirklich stimmt. 
+\end{ex}
+
+\begin{defn}\label{2.11}
+Seien $p: X\to B$, $q: Y\to B$ stetige Abbildungen zwischen topologischen Räumen. Dann heißt die Menge 
+\[
+X\times_{B}Y := \set{(x, y)\in X\times Y}{p(x)=q(y)}\subseteq X\times Y
+\]
+\emph{Faser-Produkt von $p$ und $q$}. Dabei trägt die Menge $X\times_{B}Y \subseteq X\times Y$ die Teilraumtopologie. 
+\end{defn}
+
+\begin{rmk}\label{2.12}
+\begin{enumerate}[label=(\textit{\roman*})]
+\item Ist $B$ nur ein Punkt, dann ist $X\times_{B}Y = X\times Y$. 
+
+\item Ist $X=\{b\}\subseteq B$ und $p: \{b\} \embed B$ die Inklusion, dann ist $ \{b\}\times_{B}Y\to q^{-1}[\{b\}]$, $ (x, y)\mapsto y $ ein Homöomorphismus, da das Inverse von der Form $\{b\}\times_{B}Y \rightarrow q^{-1}[\{b\}]$, $ (b, y)\mapsfrom y $ ist, also die Einschränkung einer stetigen Funktion und damit auch stetig. Wir erhalten, dass
+\[ \begin{tikzcd}
+X\times_B Y \arrow{r}{p_Y} \arrow[swap]{d}{p_X} & Y\arrow{d}{}  \\%
+X \arrow{r}{p}& B \arrow{u}{}
+\end{tikzcd}
+\]
+ein kommutatives Diagramm ist. 
+\end{enumerate}
+\end{rmk}
+
+\begin{thr}[Universelle Eigenschaft des Faser-Produkts]\label{2.13}
+Seien $f: T\to X$, $g: T\to Y$ stetige Abbildungen zwischen topologischen Räumen sodass $ p\circ f = q\circ g $. Dann existiert ein eindeutiges und stetiges $h: T\to X\times_{B}Y$ mit $g=\pi_{X}\circ h$ und $f= \pi_{Y}\circ h$ ($\pi_{X}, \pi_{Y}$ sind die Projektionen auf jeweils $X, Y$). 
+\end{thr}
+
+\begin{ex}
+Beweisen Sie \Cref{2.13}. \hint{Der Beweis ist ähnlich wie der für die induzierte Topologie.}
+\end{ex}
+
+\section{Summen und co-induzierte Topologie}
+
+Seien $f_{i}: X_{i}\to M$ Abbildungen und $X_{i}$ topologische Räume für alle $i\in I$, wobei $I$ eine beliebige Indexmenge ist. Welches ist die feinste Topologie auf $ M $ sodass alle $f_{i}$ stetig sind?
+
+Die Antwort ist: 
+\begin{defn}\label{DefCoinducedTopo}
+Die Topologie
+\begin{equation}\label{2.15}
+\varJ^{\operatorname{co}} = \set{U\subseteq M}{f_{i}^{-1}[U]\subseteq X_{i} \text{ offen für alle $i\in I$}}
+\end{equation}
+heißt \emph{von den $f_i$s co-induzierte Topologie}. 
+\end{defn}
+
+\begin{thr}[Universelle Eigenschaft der co-induzierten Topologie]\label{2.16}
+$ \varJ^{\operatorname{co}} $ ist die einzige Topologie auf $M$ mit: Für alle $g: M \to T$ gilt
+\begin{equation}\label{2.17}
+g\text{ stetig}\iff g\circ f_{i}:X_{i}\to T \text{ stetig für alle $i\in I$}, 
+\end{equation}
+wobei $T$ ein beliebiger topologischer Raum ist. 
+\end{thr}
+
+\begin{proof}
+Wir zeigen zuerst, dass $ \varJ^{\operatorname{co}} $ \eqref{2.17} erfüllt. Ist $g$ stetig, ist offensichtlich auch $ g\circ f_{i}$ stetig für alle $i$. 
+
+Sei $g\circ f_{i}$ stetig für alle $i\in I$ und sei $U\subseteq T$ offen. Dann ist 
+\[ 
+(g\circ f_{i})^{-1}[U] = f_{i}^{-1}\bigg[g^{-1}[U]\bigg] \subseteq X_{i} \text{ offen für alle $i\in I$}
+\]
+und weil $ M $ die co-induzierte Topologie trägt, ist also $ g^{-1}[U]\subseteq M $ offen.
+
+Für die Eindeutigkeit seien $ \varT_{1}, \varT_{2} $ Topologien auf $ M $, die beide \eqref{2.17} erfüllen. Dann lässt sich zeigen (siehe Beweis von \Cref{2.2}), dass $ f_{i}:X_{i}\to (M, \varT_{i}) $ für alle $ i\in I $ stetig ist. Betrachten wir nun die Funktion
+\[
+\id = g: (M, \varT_1) \to (M, \varT_2), \quad m\mapsto m, 
+\]
+dann ist die Komposition $ f_{i}= g\circ f_{i}: X_{i} \to (M, \varT_{2}) $ stetig und nach \eqref{2.17} $g$ stetig. Dies zeigt $ \varT_{2}\subseteq \varT_{1} $. Die andere Inklusion folgt durch das Vertauschen von $ \varT_{1} $ und $ \varT_2 $. 
+\end{proof}
+
+\begin{defn}\label{2.18}
+Seien $X_i, i\in I$ topologische Räume. Der Raum 
+\begin{equation}\label{SummeDef}
+\coprod_{i\in I} X_{i} = \set{(x, i)}{x\in X_{i}, i\in I}
+\end{equation}
+versehen mit der co-induzierten Topologie von den Abbildungen 
+\begin{equation}\label{ProjektionAufSumme}
+X_{j} \to \coprod_{i\in I} X_{i}, \quad x \mapsto (x, j), \quad j\in J
+\end{equation}
+heißt \emph{Summe der $ X_{i} $}. Ist $I=\{1,2,\dots,n\}$ endlich schreiben wir manchmal auch $X_{1}+\dots + X_{n}$. 
+\end{defn}
+
+\begin{rmk}\label{2.19}
+Die offenen Mengen der Summe $ \coprod_{i\in I}X_{i} $ sind Mengen der Form $ \coprod_{i\in I}U_{i} $, wobei $U_{i}\subseteq X_{i}$ offen ist, weil 
+\[
+\varJ^{\operatorname{co}} = \set{U\subseteq \coprod_{i\in I}X_{i}}{f^{-1}_{i}[U]\subseteq X_{j} \text{ offen für alle $j\in I$}}. 
+\]
+Die Funktionen $ f_{j}: X_{j} \to \coprod_{i\in I}X_{i} $ sind durch \eqref{ProjektionAufSumme} definiert und sind Einbettungen deren Bilder offen und Abgeschlossen in der Bildmenge sind. 
+Diese Bilder bilden eine Partition der Summe. 
+\end{rmk}
+
+% TODO: \usepackage{graphicx} required
+\begin{figure}
+\centering
+\includegraphics[width=0.7\linewidth, page=2, trim = 165 289 140 110, clip]{Figures/Topologie_Grafiken}
+\caption{Eine Visualisierung von $ \mathbb{S}^{1} + \mathbb{S}^{1} $. Die Menge ist gegeben durch 
+\[
+\mathbb{S}^{1} + \mathbb{S}^{1} = \{(x, i)\mid x\in \mathbb{S}^{1}, i=1,2\}. 
+\]	
+Im Bild ist z.B. $ \set{(x, i)\in \mathbb{S}^{1} + \mathbb{S}^{1}}{i=1} $ der linke Kreis. 
+}
+\label{2.20}
+\end{figure}
+
+
+\chapter{Zusammenhang und Trennung}
+\section{Zusammenhang}
+\begin{notat}\label{3.1}
+Sind zwei topologische Räume $X, Y$ homöomorph, dann schreiben wir $X\cong Y$. 
+\end{notat}
+
+\begin{defn}\label{3.2}
+Sei $X\neq \emptyset$ ein topologischer Raum. $X$ heißt \emph{zusammenhängend} falls 
+\[
+X \cong X_{1} + X_{2} \implies X_{1} = \emptyset \text{ oder } X_{2} = \emptyset.
+\]
+\end{defn}
+Der nächste Satz ist sehr nützlich, um Zusammenhang festzustellen.
+\begin{thr}\label{3.3}
+Sei $X$ ein nichtleerer topologischer Raum. {\TFAE}: 
+\begin{enumerate}[label=\textit{(\roman*)}]
+\item\label{3.3. i} $X$ ist zusammenhängend; 
+\item\label{3.3. ii} $X$ und $\emptyset$ sind die einzigen Mengen die offen \emph{und} abgeschlossen sind; 
+\item\label{3.3. iii} Jede stetige Funktion $ f: X\to \{\pm 1\} = \Ss^{0} $ ist konstant. 
+\end{enumerate}
+\end{thr}
+
+\begin{proof}
+\implication{\ref{3.3. i}}{\ref{3.3. ii}}: Sei $A\subseteq X$ offen \emph{und} abgeschlossen. $X\setminus A$ ist auch offen und abgeschlossen. Wir definieren 
+\[
+f: X\to A + X\setminus A, \quad x\mapsto 
+\begin{cases}
+(x, 1), & x\in A\\
+(x, 2), & x\in X\setminus A. 
+\end{cases}
+\]
+Dies ist ein Homöomorphismus, denn $f$ ist bijektiv und für jedes $U\subseteq X$ ist $U$ offen genau dann wenn $U\cap A\subseteq A$ \emph{und} $U\cap(X\setminus A)\subseteq X\setminus A$ in den jeweiligen Teilraumtopologie offen ist. Dies ist aber genau dann der Fall, wenn $f[U] = U \cap A + U \cap X\setminus A$ in $A + X\setminus A$ offen ist. 
+
+Weil aber $X$ zusammenhängend ist, gilt $A=X$ oder $A=\emptyset$. 
+
+\implication{\ref{3.3. ii}}{\ref{3.3. iii}}: Sei $x\in X$ und $f: X\to \Ss^0$ stetig. Da $\{f(x) \}\subseteq \Ss^0$ offen und abgeschlossen ist, ist $f^{-1}[\{f(x)\}]$ offen und abgeschlossen, daher nach Voraussetzung gilt $f^{-1}[\{f(x)\}] \in \{X, \emptyset\}$. Da $x$ arbiträr war, folgt, dass $f$ konstant sein muss. 
+
+\implication{\ref{3.3. iii}}{\ref{3.3. i}}: Sei $X\cong X_1 + X_2$. Die Funktion 
+\[
+X_1 + X_2 \to \Ss^0, \quad (x, i) \mapsto \begin{cases}
+1, & i=1,\\
+-1, & i=2
+\end{cases}
+\]
+ist stetig und daher konstant. Es folgt damit entweder $X_1 = \emptyset$ oder $X_2 = \emptyset$. 
+\end{proof}
+
+\paragraph{Erinnerung.} $M\subseteq \RR$ heißt Intervall, falls für alle $a, b, c\in \RR$ mit $a<b<c$ gilt: 
+\[
+a, c \in M \implies b\in M
+\]
+Der Beweis der nächsten Behauptung ist ein Beispiel, wie \Cref{3.3} anzuwenden ist. 
+\begin{prop}\label{3.4}
+Sei $M\subseteq \RR$. $M$ ist genau dann ein Intervall, wenn es zusammenhängend ist. 
+\end{prop}
+\begin{proof}
+\reverseimplication{}{}: Sei $M$ ein Intervall, $f:M \to \Ss^0$ stetig und seien $a, c\in M$. Dann ist $\eval{f}_{[a, c]} [a, c]\to \Ss^0\subseteq \RR$ stetig und wegen dem Zwischenwertsatz konstant. Weil $a, c$ arbiträr waren, ist $f$ konstant d.h. $M$ ist zusammenhängend (\Cref{3.3}).
+
+\implication{}{}: Seien $a, c \in M$ und $b\in (a,c)$, wobei $M$ zusammenhängend ist. Wäre nun $b\notin M$, dann wäre 
+\[
+M = (M\cap (-\infty, b)) \overset{\cdot}{\cup} (M\cap (b, +\infty)).
+\]
+Es lässt sich nun leicht zeigen, dass dann $M$ nicht zusammenhängend wäre. Widerspruch.
+\end{proof}
+\begin{cor}\label{3.5}
+Sei $f: X\to Y$ stetig und $X$ zusammenhängend. Dann ist $f[X]$ zusammenhängend. 
+\end{cor}
+\begin{proof}
+Sei $g: f[X] \to \Ss^0$ stetig. Dann ist aber $f\circ g$ auch stetig und konstant. Da $f$ surjektiv auf $f[X]$ abbildet muss also auch $g$ konstant sein. Aus \Cref{3.3} folgt, dass $f[X]$ zusammenhängend ist. 
+\end{proof}
+
+\begin{cor}\label{3.6}
+Seien $Z_i\subseteq X$, $i\in I$ wobei jedes $Z_i$ zusammenhängend ist. Falls $Z_i\cap Z_j \neq \emptyset$ für alle $i,j\in I$ ist auch $\union_{i\in I} Z_i$ zusammenhängend. 
+\end{cor}
+\begin{proof}
+Sei $f: \union_i Z_i \to \Ss^0$ stetig. Die Einschränkung $\eval{f}_{Z_i}$ ist konstant und da $Z_i\cap Z_j\neq \emptyset$ ist auch $\eval{f}_{Z_i\cup Z_i}$ konstant. Es folgt, dass $f$ konstant ist.
+\end{proof}
+
+\begin{ex}\label{ex1}
+Sei $X$ ein topologischer Raum und $A\subseteq X$ zusammenhängend. Zeigen Sie, dass $\closure{A}$ auch zusammenhängend ist. \hint{Betrachten Sie eine stetige Funktion $f:\closure{A}\to \Ss^0$. }
+\end{ex}
+
+\begin{cor}\label{3.7}
+Sei $X$ ein topologischer Raum und $x\in X$. Dann gibt es eine größte Menge $Z(x) \subseteq X$ mit $x\in Z(x)$ und $Z(x)$ ist zusammenhängend. $Z(x)$ ist außerdem abgeschlossen.
+\end{cor}
+\begin{defn}
+Wir nennen $Z(x)$ aus \Cref{3.7} die \emph{Zusammenhangskomponente} von $x$. Falls $Z(x) = \{x\}$ für alle $x\in X$, heißt $X$ \emph{total unzusammenhängend}.
+\end{defn}
+\begin{proof}[Beweis von \Cref{3.7}]
+Sei für $x\in X$
+\[
+\varZ(x)=\set{Z\subseteq X}{x\in Z, Z \text{ zusammenhängend}}.
+\]
+Dann ist nach \Cref{3.7} $Z(x) := \union_{Z\in \varZ(x)}Z$ zusammenhängend und enthält $x$ und ist offensichtlich die größte Menge mit dieser Eigenschaft. Wegen \Cref{ex1} ist $\closure{Z(x)}$ zusammenhängend, damit gilt aber $Z(x) = \closure{Z(x)}$, weil $Z(x)$ die größte zusammenhängende Menge ist, die $x$ enthält. 
+\end{proof}
+\begin{eg}\label{3.8}
+Sei $X= \QQ\subseteq \RR$ und $x\in X$. Dann ist $Z(x) = \{x\}$, denn: $Z(x) \subseteq \RR$ ist ein Intervall und $Z(x) \subseteq \QQ$, also $Z(x) = [x, x] = \{x\}$. Damit ist $\QQ$ total unzusammenhängend, aber \emph{nicht} der diskrete Raum.
+\end{eg}
+\begin{eg}\label{3.9}
+Wir konstruieren in diesem Beispiel die Kantor-Menge und zeigen, dass sie total unzusammenhängend und überabzählbar ist. Sei dazu 
+\[
+\begin{split}
+A_0 &:= [0,1]\\
+A_1 &:=\left[0, \frac{1}{3}\right] \cup \left[\frac{2}{3}, 1\right]\\
+A_2 &:= \left[0, \frac{1}{9}\right]\cup \left[\frac{2}{9}, \frac{3}{9}\right] \cup\left[\frac{6}{9}, \frac{7}{9}\right]\cup \left[\frac{8}{9}, \frac{9}{9}\right]\\
+\vdots &
+\end{split}
+\]
+Zusammenfassend definieren wir die Menge $ A_{n} $ durch 
+\[
+A_{n} := f_{1}[A_{n-1}] \cup f_{2}[A_{n-1}], \quad \text{wobei}\quad f_{i}:[0,1] \to [0,1], \quad x\mapsto \frac{1}{3}x + \frac{i}{3}
+\]
+für $ i=1, 2 $. Wir definieren nun die \emph{Kantor-Menge} durch 
+\[
+\mathcal{C} := \intersect_{i\in \mathbb{N}\cup \{0\}} A_{i}.
+\]
+Wir bemerken weiterhin, dass jedes $a \in [0,1]$ in der Form
+\begin{equation}\label{ternaer}
+a = \sum_{i\in \NN} a_{i}\frac{1}{3^{i}}, \quad a_{i}\in \{0,1, 2\}
+\end{equation}
+geschrieben kann und das $ \mathcal{C} $ genau jene Elemente enthält deren Ternärdarstellung keine Einsen besitzt. Wir schreiben für $ a $ in der Form \eqref{ternaer} $ a =: 0.a_{1}a_{2}a_{3}\dots_{3} $. Es ist von hier aus leicht zu sehen, dass 
+\begin{equation}\label{cequalsternary}
+\mathcal{C} = \set{a \in [0,1]}{a=0.a_{1}a_{2}a_{3}\dots_{3}, a_{i}\in \{0,2\},i\in \mathbb{N}}.
+\end{equation}
+Wir behaupten nun
+\begin{equation}\label{Claim:Cisuncountable}
+\text{$ \mathcal{C} $ ist überabzählbar.}
+\end{equation}
+Um \eqref{Claim:Cisuncountable} nachzuweisen bemerken wir, dass wegen \eqref{cequalsternary} $ \mathcal{C} $ die gleiche Kardinalität hat wie $ \abb(\NN, \{0,2\}) $. Wir nehmen nun an, dass $\varphi: \mathbb{N}\to \abb(\NN, \{0,2\}) $ eine Bijektion ist und leiten einen Widerspruch her. Setze 
+\[
+f: \mathbb{N}\to \{0,1\}, \quad i \mapsto
+\begin{cases}
+2,& \text{falls }\varphi(i)(i) = 0\\
+0, &\text{falls }\varphi(i)(i)=2.
+\end{cases}
+\]
+Dann gilt aber $\varphi(i) \neq f$ für alle $i\in \mathbb{N}$, Widerspruch. 
+
+Um das Beispiel abzuschließen zeigen wir eine letzte Behauptung: 
+\begin{equation}\label{Cunzsmh}
+\text{$ \mathcal{C} $ ist total unzusammenhängend.}
+\end{equation}
+Sei dazu $ x\in \mathcal{C} $ und $ Z(x) $ die Zusammenhangskomponente von $x$ in $ \mathcal{C} $. Mit \Cref{3.4} folgt, $ Z(x)$ ist ein Intervall. Wegen der Konstruktion von $ \mathcal{C} $ folgt
+\[
+\abs{Z(x)}\leq \frac{1}{3^{i}} \quad \text{für alle }i\in \mathbb{N}. 
+\]
+Damit folgt $ Z(x) =[x, x] = \{x\} $. Dies schließt das Beispiel ab. 
+\end{eg}
+\begin{cor}\label{3.10}
+Sei $X$ ein topologischer Raum bestehend aus endlich vielen Zusammenhangskomponenten $\{Z_1, \dots, Z_N\}$. Dann ist jede Zusammenhangskomponente offen und abgeschlossen.
+\end{cor}
+\begin{proof}
+Wegen \Cref{3.7} ist $Z_i\subseteq X$ abgeschlossen für alle $i=1,\dots, N$. Wegen 
+\[
+Z_i = X \setminus \bigg(\union_{\substack{j=1\\j\neq i}}^N Z_j\bigg)
+\]
+ist $Z_i$ als Komplement einer abgeschlossenen Menge auch offen.
+\end{proof}
+\begin{cor}\label{3.11}
+Seien $X, Y$ topologische Räume. {\TFAE}: 
+\begin{enumerate}[label=\textit{(\roman*)}]
+\item\label{3.11,i} $X\times Y$ ist zusammenhängend; 
+\item\label{3.11,ii} $X$ und $Y$ sind beide zusammenhängend. 
+\end{enumerate}
+\end{cor}
+\begin{proof}
+\implication{\ref{3.11,i}}{\ref{3.11,ii}}: Seien $ \pi_{X} $ und $ \pi_{Y} $ die Projektionen auf jeweils auf die $X$- und $Y$-Koordinaten. Dies sind stetige Surjektionen, daher folgt mit \Cref{3.5}, dass $ X $ und $ Y$ zusammenhängend sind. 
+
+\implication{\ref{3.11,ii}}{\ref{3.11,i}}: Seien $(x, y), (u, v)\in X\times Y$. Die Mengen $ \{u\}\times Y \cong Y $ und $ X\times \{y\} \cong X $ sind zusammenhängend, also ist $ \{u\}\times Y \cup X \times \{y\} $ zusammenhängend (\Cref{3.6}). Dann liegen aber die beiden Punkte $(x, y), (u, v)$ in der gleichen Zusammenhangskomponente von $ X\times Y $. Da die Punkte arbiträr gewählt wurden, muss $X\times Y$ zusammenhängend sein. 
+\end{proof}
+\begin{defn}\label{3.12}
+Ein topologischer Raum $X$ heißt \emph{lokal zusammenhängend}, falls für alle $x\in X$ und jede Umgebung $U$ von $x$ eine zusammenhängende Umgebung $V$ von $x$ mit $V\subseteq U$ existiert. 
+\end{defn}
+
+\section{Trennung und stetige Fortsetzbarkeit}
+Trennungseigenschaften sichern die Existenz genügend vieler offener Mengen, um gewisse
+Teilmengen des Raumes voneinander zu trennen.
+\begin{defn}
+Sei $X$ ein topologischer Raum. Wir führen folgende Eigenschaften ein: 
+\begin{enumerate}[label={\normalfont\textbf{T\arabic*}}]
+\item\label{T1} Für alle $x, y\in X$, $x\neq y$ existieren Umgebungen $U_x, U_y$ von jeweils $x, y$ sodass $y\notin U_x$ und $x\notin U_y$. 
+\item\label{T2} Für alle $x, y\in X$, $x\neq y$ existieren Umgebungen $U_x, U_y$ von jeweils $x, y$ sodass $U_x \cap U_y = \emptyset$
+\item\label{T3} Für alle $x\in X$ und $U\subseteq X\setminus\{x\}$ in $X$ abgeschlossen existieren disjunkte Umgebungen. (Eine Umgebung einer Teilmenge ist eine Obermenge einer offenen Menge, welche die Teilmenge enthält). 
+
+\item\label{T4} Zu je zwei abgeschlossenen disjunkten Mengen von X gibt es disjunkte Umgebungen.
+\end{enumerate}
+Ein topologischer Raum X ist ein \emph{Hausdorff-Raum}, wenn er die Eigenschaft \ref{T2} hat. Erfüllt
+ein topologische Raum alle Trennungseigenschaften, so nennt man ihn \emph{normal}.
+\end{defn}
+\begin{ex}
+Zeigen Sie folgende Aussagen: 
+\begin{enumerate}[label=(\arabic*)]
+\item $\ref{T1}\iff$ für alle $x\in X$ ist $\{x\} \subseteq X$ abgeschlossen.
+\item $\ref{T2} \implies \ref{T1}$. 
+\end{enumerate}
+\end{ex}
+
+\begin{eg}\label{eg:Urysohnfkt}
+Sei $(X, d)$ ein metrischer Raum. Dann ist $X$ \ref{T2}. Wir definieren weiter für alle $M\in \powerset{X}\setminus\{\emptyset\}$ abgeschlossen
+\[
+d_M(x) := \inf_{a\in M} d(x, a). 
+\]
+Für zwei disjunkte abgeschlossene Mengen $A, B\subseteq X$ können wir die stetige Funktion $f: X \to \RR$ durch $f(x) = \frac{d_A(x)}{d_A(x)+d_B(x)}$ definieren. Dann sind die Mengen $f^{-1}[[0, \frac{1}{2})] \supseteq A$, \todo{überprüfen...}. Also erfüllt $X$ \ref{T4} und ist weiter normal. 
+\end{eg}
+\begin{rmk}
+Falls ein topologischer Raum $X$ \ref{T1} erfüllt, dann wird \ref{T4} durch \ref{T3} impliziert. 
+\end{rmk}
+
+\begin{defn}\label{Urysohnfkt}
+Seien $A, B\subseteq X$ abgeschlossen und disjunkt. Eine stetige Funktion $f: X\to [0,1]$ heißt \emph{Urysohn-Funktion} zu $A, B$, falls $\eval{f}_A\equiv 0$ und $\eval{f}_B\equiv 1$ ist.
+\end{defn}
+
+\begin{eg}
+Die Funktion $f$ aus \Cref{eg:Urysohnfkt} ist auch eine Urysohn-Funktion.
+\end{eg}
+\begin{ex}
+Sei $X$ ein topologischer Raum und $(f_n)_{n\in\NN}$ eine Folge von stetigen Funktionen $f_n: X\to \RR$, die punktweise in $\RR$ konvergiert. Zeigen Sie, dass die Grenzfunktion wieder stetig ist. 
+\end{ex}
+
+\begin{thr}[Tietze-Urysohn]\label{3.13}
+Sei $X$ ein topologischer Raum. {\TFAE}: 
+\begin{enumerate}[label=(\arabic*)]
+\item\label{3.13, i} Der Raum $X$ erfüllt \ref{T4}; 
+\item\label{3.13, ii} Für alle $A, B\subseteq X$ abgeschlossen mit $A\cap B = \emptyset$ existiert eine Urysohn-Funktion.
+\item\label{3.13, iii} Für alle $A\subseteq X$ abgeschlossen und $f:A\to [0,1]$ stetig existiert eine stetige Abbildung $F: X \to \RR$, die mit $F$ auf $A$ übereinstimmt. 
+\end{enumerate}
+\end{thr}
+\begin{proof}
+\implication{\ref{3.13, i}}{\ref{3.13, ii}}: Sei $ X $ \ref{T4} und $ A, B\subseteq X$ abgeschlossen und disjunkt. Wegen \ref{T4} finden wir $ C\subseteq X $, sodass
+\[
+A \subseteq \interior{C}\subseteq \closure{C} \subseteq X\setminus B.
+\]
+Dafür trennt man $ A, B $ durch disjunkte Umgebungen $C, D$. Man kann nun diese Prozedur wieder auf $ A $ und $ \closure{C} $ anwenden. Macht man das weiter erhält man eine Kette von Mengen.  Wir nennen eine Kette der Länge $ k\in \mathbb{N} $
+\[
+\mathcal{A} := (A=A_{0}\subseteq A_{1}\subseteq \dots \subseteq A_{k}\subseteq X\setminus B)
+\]
+\emph{zulässig}, falls stets $ \closure{A_{i}}\subseteq \interior{A_{i+1}} $ und $ \closure{A_{k}}\subseteq  X\setminus B$. Durch obiges Argument kann man die Kette auf die doppelte Länge verfeinern. Wir finden somit eine folge $ (\mathcal{A}_{n})_{n\in \mathbb{N}} $ von zulässigen Ketten, wobei $ \mathcal{A}_{n+1} $ eine solche doppelt so lange Verfeinerung von $ \mathcal{A}_{n} $ ist und $ \mathcal{A}_{0} = (A\subseteq X\setminus B) $. Zu $ \mathcal{A}_{n} =(A_{0}\subseteq \dots \subseteq A_{2^{n-1}})$ definieren wir eine Treppenfunktion durch 
+\[
+f_{k}(x) := k2^{-n}\quad \text{für alle }x\in A_{k}\setminus A_{k-1}, \quad A_{-1}=\emptyset \text{ und } A_{2^n} = X.
+\]
+Die Folge $ (f_{k})_{k\in \mathbb{N}} $ ist monoton fallend und beschränkt und konvergiert daher punktweise gegen eine Grenzfunktion
+\[
+f(x) := \lim_{n\to+\infty} f_{n}(x).
+\]
+Es gilt $\eval{f}_{A} \equiv 0 $ und $ \eval{f}_{B} \equiv 1 $. Wir zeigen noch, dass $ f $ stetig ist. Nun gilt
+\[
+\abs{f_{n}(x)- f_{n+1}(x)} \leq 2^{-(n+1)}
+\]
+und bezüglich der Kette $ \mathcal{A}_{n} $ gilt
+\[
+\abs{f_{n}(x) - f_{n}(y)}\leq 2^{-n}\quad \text{für alle $ x, y\in \interior{A_{k+1}}\setminus \closure{A_{k-1}} $}. 
+\]
+Also folgt 
+\begin{align*}
+\abs{f(x) - f(y)} 
+&
+\leq \abs{f(x) - f_{n}(x)} + \abs{f_{n}(x) - f_{n}(y)} + \abs{f_{n}(y)- f(y)}\\
+&
+\leq \sum_{k\geq n+1} 2^{-k} + 2^{-n} + \sum_{k\geq n+1}2^{-k} = 3\cdot 2^{-n}.  
+\end{align*}
+Wählt man $ \varepsilon> 3\cdot 2^{-n} $, kann man $ x $ in der offenen Umgebung $ \interior{A_{k+1}}\setminus \closure{A_{k-1}} $ variieren ohne Schwankungen größer als $ \varepsilon $ zu erhalten.
+
+\implication{\ref{3.13, ii}}{\ref{3.13, iii}}: Sei $ f:A\to [-1, 1] $ stetig, $ A $ abgeschlossen. Sei $ G $ eine Urysohn-Funktion auf $ X $ zu den disjunkten abgeschlossenen Teilmengen $ f^{-1}[[-1, \frac{1}{3}]] $ und $ f^{-1}[[\frac{1}{3}, 1]] $. Dann erfüllt die Funktion $ F_{1} := \frac{2}{3}G- \frac{1}{3} $
+\begin{align*}
+\abs{f(x)-F_{1}(x)} & \leq \frac{2}{3}\quad \text{für $ x\in A $ und}\\
+\abs{F_{1}(x)} & \leq \frac{1}{3} \quad \text{für $ x\in X $}, 
+\end{align*}
+was sich durch Betrachten von $ x $ in den Urbildern von $ [-1, \frac{-1}{3}] $, $ (\frac{-1}{3},  \frac{1}{3}) $ und $ [\frac{1}{3}, 1] $ unter $ f $ prüfen lässt. Die Funktion $ F_{1} $ nähert $ f $ allerdings nur an. Für eine bessere Näherung, wenden wir das Verfahren auf die Fehlerfunktion
+\[
+f': A\to [\frac{-2}{3}, \frac{2}{3}], \quad x\mapsto f(x) - F_{1}(x)
+\]
+an, womit wir $ F_{2}:X\to\mathbb{R} $ erhalten, welches
+\begin{align*}
+\abs{f'(x)- F_{2}} & \leq \left(\frac{2}{3}\right)^{2} \quad \text{für $ x\in A $ und}\\
+\abs{F_{2}} \leq \frac{1}{3}\cdot \frac{2}{3} \quad \text{für $ x\in X $}
+\end{align*}
+erfüllt. Indem wir dieses Verfahren weiter treiben, erhalten wir eine Folge $ (F_{n})_{n\in \mathbb{N}} $, mit
+\begin{align*}
+\abs*{f(x) - \sum_{j=1}^{n}F_{j}} &\leq \left(\frac{2}{3}\right)^{n} \quad \text{für $ x\in A $ und}\\
+\abs{F_{n}(x)} & \leq \frac{1}{3}\cdot \left(\frac{2}{3}\right)^{n-1} \quad \text{für $ x\in X $. }
+\end{align*}
+Also konvergiert die Reihe $ \sum_{n\in \mathbb{N}}F_{n} $ gleichmäßig gegen eine stetig Funktion $ F $ mit $ \eval{F}_{A} \equiv f $. 
+\todo{\implication{\ref{3.13, iii}}{\ref{3.13, i}}}
+\end{proof}
+
+\begin{thr}\label{3.14}
+Seien $A\subseteq \RR^n$ und $B\subseteq \RR^m$ abgeschlossene zueinander homöomorphe Teilmengen. Dann sind die Komplemente von $A\cong A \times \{0\}$ und $B \cong \{0\} \times B$ in $\RR^{n+m}$ homöomorph.
+\end{thr}
+\begin{proof}
+Sei $ \varphi: A\to B $ ein Homöomorphismus. Gemäß \Cref{3.13} finden wir eine stetige Erweiterung $ \Phi: \RR^{a} \to \RR^{b} $. Sei analog $ \Psi:\RR^{b}\to \RR^{a} $ eine stetige Erweiterung von $ \psi:= \varphi^{-1} $. Dann sind 
+\begin{align*}
+L: \mathbb{R}^{a}\times \mathbb{R}^{b} \to \mathbb{R}^{a}\times \mathbb{R}^{b}, &\quad (x, y)\mapsto (x, y- \Phi(x))\quad \text{und}\\
+R: \mathbb{R}^{a}\times \mathbb{R}^{b} \to \mathbb{R}^{a}\times \mathbb{R}^{b}, &\quad (x, y)\mapsto (x-\Psi(y), y)
+\end{align*}
+Homöomorphismen. $ L $ bildet den Graphen von $ \varphi $ homoömorph auf $ A\times \{0\} $ ab und $ R $  homöomorph auf $ \{0\}\times B $. Also ist $\eval{R \circ  L^{-1}}_{A\times \{0\}}\to \{0\}\times B$ ein Homöomorphismus.
+\end{proof}
+
+
+\begin{cor}\label{3.15}
+Knoten in $\RR^3$ sind äquivalent in $\RR^5$ d.h. falls $K_1, K_2 \subseteq \RR^3$ abgeschlossen mit $K_1, K_2 \cong \Ss^1$ sind, existiert ein Homömorphismus $\RR^5 \to \RR^5$ welcher $K_1\times \{0\}$ auf $K_2 \times \{0\}$ abbildet. 
+\end{cor}
+\begin{proof}
+Nach \Cref{3.14} existiert ein Homöomorphismus $ \RR^{3} \times \RR^{2} \to \mathbb{R}^{3} \times \mathbb{R}^{2} $, sodass
+\[
+K_{1} \times \{0\} \xrightarrow{\sim} \{0\}\times \mathbb{S}^{1} \xleftarrow{\sim} K_{2}\times \{0\}. \qedhere
+\]
+\end{proof}
+
+
+
+\chapter{Kompaktheit}
+\section{Definition und erste Eigenschaften}
+\begin{defn}\label{4.1}
+Sei $X$ ein topologischer Raum. $X$ heißt \emph{kompakt}, falls jede offene Überdeckung eine endliche Teilüberdeckung hat. 
+\end{defn}
+
+\begin{rmk}\label{4.2}
+Kompaktheit ist invariant unter Homöomorphie
+\end{rmk}
+
+\begin{eg}\label{4.3}
+Das Intervall $[0,1]$ ist kompakt. Um dies einzusehen nehmen wir eine offene Überdeckung $ \{U_{i}\}_{i\in I} $. Wir definieren nun 
+\[ 
+\mathcal{M} := \set{s\in [0,1]}{\exists E \subseteq I \text{ endlich, s.d. }\union_{e\in E}U_{e}\supseteq [0,s]}.
+\]
+Sei $t:= \sup\mathcal{M}$. Offensichtlich gilt $t>0$, da $0\in U_i$ für ein $i\in I$ aber $U_i$ ist offen. Wäre nun $t<1$, dann fänden wir $U_j$ sodass $(t+\varepsilon, t-\varepsilon) \subseteq U_j$ für ein $\varepsilon>0$. Weiter würde wegen der Definition von $t$ ein endliches $E\subseteq I$ existieren, sodass $\union_{e\in E}U_{e}\supseteq [0, t- \varepsilon/2]$. Dann wäre aber $ \{U_{e}\}_{e\in E\cup\{j\}} $ eine offene Überdeckung von $[0, t+\varepsilon/2]$. Widerspruch zur Maximalität von $t$. 
+
+Von hier aus sieht man leicht, dass $[0,1]$ sich endlich überdecken lässt. 
+\end{eg}
+
+\begin{thr}\label{4.4}
+Ist $X$ kompakt und $A\subseteq X$ abgeschlossen, dann ist auch $A$ kompakt. 
+\end{thr}
+\begin{proof}
+Sei $ \{U_{i}\}_{i\in I} $ eine offene Überdeckung von $A$. Für alle $i\in I$ finden wir also $V_i\subseteq X$ offen mit $V_i \cap A = U_i$. Dann ist aber $ \{V_{i}\}_{i\in I}\cup\{X\setminus A\} $ eine offene Überdeckung von $X$. Aus der Kompaktheit von $X$ folgt die Existenz von $I'\subseteq I$ endlich, sodass $ \{V_{i}\}_{i\in I'}\cup\{X\setminus A\} $ eine offene Überdeckung von $X$ ist. Dann ist aber $ \{U_{i}\}_{i\in I'} $ eine endliche Überdeckung von $A$. 
+\end{proof}
+Falls $X$ ein Hausdorff-Raum ist, ist die Umkehrung des obigen Satzes auch wahr: 
+\begin{thr}\label{4.5}
+Sei $X$ \ref{T2} und $A\subseteq X$. Falls $A$ kompakt ist, ist $A$ abgeschlossen in $X$. 
+\end{thr}
+
+\begin{proof}
+Fixiere $x\in X\setminus A$. Für jedes $a\in A$ finden wir $U_{a}, V_{a}\subseteq X$ offen und disjunkt mit $ a\in U_{a} $, $ x\in V_{a} $. Da $A$ kompakt ist und $ \union_{a\in A}U_{a}\supseteq A $ finden wir $E\subseteq A$ endlich sodass $ \union_{e\in E}U_{e} \supseteq A $. Dann ist $ V := \intersect_{e\in E}V_{e} \subseteq X$ offen und $V$ und $\union_{e\in E}U_{e}$ sind disjunkt, d.h. insbesondere sind $ V $ und $ A $ disjunkt. Da wir $x\in X\setminus A$ arbiträr gewählt haben, können wir $X\setminus A$ als Vereinigung von Mengen der Form $V$ schreiben und erhalten, dass $X\setminus A$ offen ist. \todo{Schreibe den Beweis schöner auf}
+\end{proof}
+\begin{rmk}\label{4.6}
+Der Beweis zeigt, dass ein kompakter Raum der \ref{T2} ist automatisch auch \ref{T3} ist. 
+\end{rmk}
+
+\begin{thr}\label{4.7}
+Sei $f: X \to Y$ stetig und $X$ kompakt. Dann ist auch $f[X]$ kompakt. 
+\end{thr}
+\begin{proof}
+Sei $ \{U_{i}\}_{i\in I} $ eine offene Überdeckung von $ f[M] $ (d.h. $ U_{i} $ ist in der Teilraumtopologie von $f[X]$ offen). Für alle $i\in I$ finden wir $V_{i}\subseteq X$ offen mit $U_{i}= V_{i}\cap f[X]$. Nun ist $ X = \union_{i\in I}f^{-1}[U_{i}] $ kompakt, d.h. wir finden $E\subseteq I$ endlich sodass $X = \union_{e \in E}f^{-1}[U_{e}]$. 
+
+Dann ist aber
+\[ 
+f[X] = \union_{e\in E}V_{e}\cap f[X] = \union_{e \in E}U_{e}. \qedhere
+\]
+\todo{Hier sind noch Fehler}
+\end{proof}
+
+\begin{cor}\label{4.8}
+Sei $f: X\to Y$ stetig und $X$ kompakt Sei weiter $Y$ \ref{T2}. Dann ist $f$ abgeschlossen.
+\end{cor}
+\begin{proof}
+Dies ist eine direkte Konsequenz von \Cref{4.4} und \Cref{4.5}.
+\end{proof}
+Die nächste Folgerung wird in Beweisen häufiger verwendet und ist sehr nützlich: 
+\begin{cor}\label{4.9}
+Sei $f: X\to Y$ stetig und bijektiv, $ X $ kompakt und $ Y $ \ref{T2}. Dann ist $f$ ein Homöomorphismus. 
+\end{cor}
+\begin{proof}
+Wegen \Cref{4.8} ist $f$ abgeschlossen, also $f^{-1}$ stetig. 
+\end{proof}
+
+\begin{cor}\label{4.10}
+Sei $X$ kompakt und $f: X \to \RR$ stetig. Dann ist $f$ beschränkt und nimmt sein Minimum und Maximum an. 
+\end{cor}
+
+\begin{proof}
+Nach \Cref{4.7} ist auch $f[X]\subseteq \RR$ kompakt. Weiter ist $ \{(f(x)-1, f(x) + 1)\}_{x\in X} $ eine offene Überdeckung von $f[X]$. Wir finden also $E\subseteq X$ endlich, sodass $\{(f(x)- 1, f(x)+1)\}_{x\in E}$ die Menge $f[X]$ überdeckt. Dann gilt
+\[
+\min_{y\in E} f(y)-1 \leq f(x) \leq \max_{y\in E}f(x) +1 \quad \text{für alle $ x\in X $,}
+\]
+d.h. $f$ ist beschränkt. Um die verbleibende Aussage zu zeigen sei $ (x_{n})_{n\in \NN}$ eine Folge in $ f[X] $ mit $ x_n\to \sup f[X] $ für $ n\to+\infty $.  Indem wir die Menge mit Bällen mit Radius $1$ überdecken, sehen wir aus der Kompaktheit von $f[X]$, dass $ (x_{n})_{n\in \NN} $ eine beschränkte Folge ist. Wegen Bolzano Weierstrass existiert eine konvergente Teilfolge. Wir nehmen ohne Beschränkung der Allgemeinheit an, dass die ganze Folge konvergiere. Nach \Cref{4.5} ist $f[X]$ abgeschlossen (da $\RR$ ein Hausdorff-Raum ist), damit liegt der Grenzwert der Folge in $f[X]$, also wird das Supremum angenommen. 
+
+Der Beweis, dass das Infimum angenommen wird ist analog. 
+\end{proof}
+
+\begin{thr}[Tychonoff]\label{SatzB}
+Seien $X_{i}$, $ i\in I $ kompakte Räume. Dann ist auch $ \prod_{i\in I}X_{i} $ kompakt. 
+\end{thr}
+\begin{proof}
+Wir zeigen den Satz hier nur für endliche Produkte. Per Induktion reicht es zu zeigen: 
+\begin{equation}\label{behTych}
+\text{$ X, Y $ sind kompakt}\implies X\times Y \text{ ist kompakt}. 
+\end{equation}
+Sei $ U=\set{U_{i}\times V_{i}}{i\in I} $ eine offene Überdeckung von $ X\times Y $, wobei $U_{i}\subseteq X $, $ V_{i}\subseteq Y $ offen sind.
+
+Weil $ X\times \{y\} \cong X $ für jedes $ y\in Y $ kompakt ist, finden wir $ I_{y}\subseteq I $ endlich mit $ \union_{i\in I_{y}}U_{i}\times V_{i} \supseteq X\times \{y\} $. Wir definieren weiter $ V(y):= \intersect_{i\in I_{y}} V_{i}\subseteq Y $, eine offene Menge. Weil $ Y $ kompakt ist, finden wir $ y_{1},\dots,y_{n}\in Y $, sodass $ Y= \union_{k=1}^{n}V(y_{k}) $. Also ist
+$\set{U_{i}\times V_{i}}{i\in I_{y_{k}}}${ eine Überdeckung von $ X\times Y(y_{k}) $}
+und damit 
+\[
+\union_{k=1}^{n}\set{U_{i}\times V_{i}}{i\in I_{y_{k}}}
+\]
+eine offene und endliche Überdeckung von $ X\times Y $. Dies schließt den Beweis ab. 
+\end{proof}
+\begin{cor}[Heine-Borel]\label{4.13Kim}
+Sei $A\subseteq \RR^n$. Dann: 
+\begin{equation}\label{HBorel}
+\text{$ A $ kompakt $ \iff A$ ist beschränkt und abgeschlossen.}
+\end{equation}
+\end{cor}
+\begin{proof}
+\glqq$\implies$\grqq: Sei $A\subseteq \RR^n$ kompakt. Wegen \Cref{4.10} nimmt $\norm{\cdot}$ Maximum und Minimum auf $A$ an, d.h. $A$ ist beschränkt. Da $\RR^n$ \ref{T2} ist, folgt auch, dass $A$ abgeschlossen ist (\Cref{4.5}).
+
+\glqq$\impliedby$\grqq: Wir hatten in \Cref{4.3} gezeigt, dass $[0,1]$ kompakt ist. Mit der stetigen Abbildung 
+\[
+f_{T}: \RR\to \RR, \quad x\mapsto (2x -1)\cdot T, \quad T>0
+\]
+sehen wir, dass $[-T, T]= f_T[[0,1]]$ kompakt für alle $T>0$ ist (\Cref{4.7}) und mit \Cref{SatzB} ist auch $ [-T, T]^{n} $ kompakt. Wählen wir nun $T>0$ groß genug, sodass $ A\subseteq [-T, T] $ ist $A$ also eine abgeschlossene Teilmenge eines kompakten Raumes und damit selbst kompakt (\Cref{4.4}).
+\end{proof}
+
+\begin{defn}
+Ein metrischer Raum $ (X, d) $ heißt \emph{totalbeschränkt}, falls für jedes $ \varepsilon>0 $ endlich viele $\varepsilon$-Bälle $X$ überdecken. 
+\end{defn}
+\begin{rmk}
+Falls $X$ beschränkt ist, ist es auch totalbeschränkt, denn: Wir finden $ x_{1},\dots,x_{n} \in X$ sodass 
+$ X= \union_{i=1}^{n}B_{1/2}(x_{i}) $. Für $x, y\in X$ gilt nun 
+\[
+d(x, y) \leq 1 + \max_{i\neq j} d(x_{i}, x_{j}).
+\] 
+\end{rmk}
+
+\begin{defn}
+Ein metrischer Raum $ (X, d) $ heißt \emph{folgenkompakt}, falls jede Folge eine konvergente Teilfolge hat.
+\end{defn}
+
+\begin{ex}\label{exsheet7ex6}
+Es sei $(x_i)_{i \in \mathbb{N}}$ eine Folge in einem total beschränkten metrischen Raum $(X, d)$. Zeigen Sie:
+\begin{enumerate}[label=\textit{\alph*})]
+\item Ein 1-Ball $B_1$ und eine unendliche Teilmenge $J_1 \subseteq \mathbb{N}$ existiert, so dass $x_j \in B_1$ für alle $j \in J_1$.
+\item Es existieren $\frac{1}{n}$-Bälle $B_n$ für $n \in \mathbb{N}$ und eine Kette von unendlichen Teilmengen $\mathbb{N} \supseteq J_1 \supseteq J_2 \supseteq \dots \supseteq J_n \supseteq \dots$, so dass für alle $n \in \mathbb{N}$ gilt: $x_j \in B_n$ für alle $j \in J_n$.
+\item Zu jedem $n \in \mathbb{N}$ kann ein $j_n \in J_n$ gewählt werden, so dass $j_k < j_{k+1}$ für alle $k \in \mathbb{N}$.
+\item Für alle $N \in \mathbb{N}$ und alle $n, m \geq N$ gilt $d(x_{j_n}, x_{j_m}) \leq \frac{2}{N}$. Also ist $(x_{j_k})_{k \in \mathbb{N}}$ eine Cauchy-Folge.
+\end{enumerate}
+Folgern Sie nun, dass in einem total beschränkten vollständigen metrischen Raum jede Folge eine konvergente Teilfolge besitzt.
+\end{ex}
+
+\begin{thr}\label{SatzC}
+Sei $ (X, d) $ ein metrischer Raum. {\TFAE}: 
+\begin{enumerate}[label=\textit{(\roman*)}]
+\item\label{SatzC, i} $X$ ist kompakt; 
+\item\label{SatzC, ii} $X$ ist totalbeschränkt und vollständig. 
+\end{enumerate}
+\end{thr}
+\begin{proof}
+\implication{\ref{SatzC, i}}{\ref{SatzC, ii}}: \begin{step}[Vollständigkeit:]
+Sei $ (x_i)_{i\in \mathbb{N}} $ eine konvergente Teilfolge in $X$. Dann hat $ (x_i)_{i\in \mathbb{N}} $ eine konvergente Teilfolge. Sonst würde für jedes $x$ eine Umgebung $ U_{x} $ existieren, die nur endlich viele Folgenglieder enthälte. Mit der Kompaktheit würde dies implizieren, dass $ (x_{i})_{i\in \mathbb{N}} $ nur endlich viele Folgenglieder hat. Dann würde es aber eine konvergente Teilfolge enthalten, was ein Widerspruch wäre. 
+
+Sei daher $(x_{i_{k}})_{k\in \mathbb{N}}$ eine konvergente Teilfolge von $ (x_i)_{i\in \mathbb{N}} $ mit $ \lim_{k\to+\infty} x_{i_{k}} =:x $. Für ein $\varepsilon>0$ folgt mit der Cauchy-Eigenschaft für $ n, k\in \mathbb{N} $ groß genug, dass 
+\[
+d(x_{n}, x) \leq d(x_{i_{k}}, x_{n}) + d(x_{i_{k}}, x) \leq \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon, 
+\]
+d.h. $ x_n \to x $ für $ n\to+\infty $. 
+\end{step}
+\begin{step}[Totalbeschränktheit:]
+Sei $ \varepsilon>0 $. Dann $ \union_{x\in X}B_{\varepsilon}(x) =X$. Weil $X$ kompakt ist, finden wir $ x_{1},\dots,x_{n}\in X $ mit $ X = \union_{i=1}^{n}B_{\varepsilon}(x_{i}) $. 
+\end{step}
+
+\implication{\ref{SatzC, ii}}{\ref{SatzC, i}}:\setcounter{step}{0}
+\begin{step}[Reduktion auf eine abzählbare Überdeckung:]
+Weil $ X $ totalbeschränkt ist, finden wir für alle $ n\in \mathbb{N} $ eine endliche Menge $ E_{n}\subseteq X $ sodass $ \union_{e\in E_{n}}B_{1/n}(e) $. Die Menge $ E:= \union_{n\in \mathbb{N}}E_{n} \subseteq X$ ist abzählbar und dicht und jede offene Menge von $X$ ist eine Vereinigung von Elementen aus 
+\[
+\set{B_{1/n}(e)}{n\in \NN, e\in E}, 
+\]
+was eine abzählbare Menge ist. 
+
+Also reicht es, für eine abzählbare offene Überdeckung eine endliche Teilüberdeckung zu finden. 
+\end{step}
+\begin{step}[Reduktion auf Folgenkompaktheit:]
+Sei $ U= \{U_{i}\}_{i\in \mathbb{N}} $ eine offene und abzählbare Überdeckung von $ X $. Falls $ U $ keine endliche Teilüberdeckung enthält, kann man eine Folge $ x_{i}\in X\setminus (U_{1}\cup\dots\cup U_{i}) $ wählen. Hat $ (x_{i})_{i\in \mathbb{N}} $ eine konvergente Teilfolge mit Limespunkt $ x\in U_{n}$ für ein $ n\in \mathbb{N} $, dann wäre dies ein Widerspruch nach Konstruktion.
+
+Wir sind also fertig, wenn wir Folgenkompaktheit zeigen.
+\end{step}
+\begin{step}[Folgenkompaktheit:] Der Beweise verbleibt dem Leser zur Übung, siehe \Cref{exsheet7ex6}. 
+\end{step}
+\end{proof}
+
+\section{Identifizierung und Quotiententopologie}
+
+\begin{defn}\label{4.11}
+Sei $X$ ein topologischer Raum und $p: X\to Y$ surjektiv. $p$ heißt \emph{Quotientenabbildung}, falls $Y$ die von $p$ co-induzierte Topologie trägt, d.h. für jedes $U\subseteq Y$ gilt
+\[
+\text{$ U $ offen $ \iff p^{-1}[U]\subseteq X$ offen. }
+\]
+Dies bedeutet, dass $p$ sicher stetig ist. 
+\end{defn}
+
+\begin{eg}\label{4.12}
+Sei $ \RR P^{n} $ die Mengen der Geraden im $ \RR^{n+1} $ die durch $0$ gehen. Wir definieren 
+\begin{equation}\label{Quotientenabbf.proj.Raum}
+p: \RR^{n+1}\setminus\{0\} \to \RR P^{n}, \quad x\mapsto \RR x = \set{tx}{t\in \RR}.
+\end{equation}
+Dann heißt $ \RR P^{n} $ mit der von $p$ co-induzierten Topologie \emph{reeller projektiver Raum}. Analog lässt sich $ \CC P^{n} $ definieren.
+\end{eg}
+
+\begin{eg}\label{4.13}
+Sei $X$ ein topologischer Raum und $\sim$ eine Äquivalenzrelation. Dann heißt die Menge aller Äquivalenzklassen $ {X/\sim} $ Quotientenraum von $X$ nach $\sim$, wenn $X$ mit der co-induzierten Topologie bezüglich der kanonischen Projektion 
+\[
+p: X \to {X/\sim}, \quad x\mapsto [x]_{\sim} = \set{y\in X}{y\sim x}
+\]
+versehen ist. Hier ist $p$ eine Quotientenabbildung. 
+\end{eg}
+\paragraph{Konvention:} Dies ist die Standardtopologie auf ${X/\sim}$. 
+
+\begin{rmk}
+Sei $p: X\to Y$ eine Quotientenabbildung und $T$ ein topologischer Raum. Dann sind für alle $g: Y\to T$ die folgenden beiden Aussagen äquivalent: 
+\begin{itemize}
+\item $g$ ist stetig; 
+\item die Komposition $g \circ p: X\to T$ ist stetig. 
+\end{itemize}
+Dies ist ein Spezialfall der universellen Eigenschaft der co-induzierten Topologie vgl. \Cref{2.16}.
+\end{rmk}
+\begin{eg}\label{4.14}
+Sei $X= [0,1]\subseteq \RR$. Wir definieren eine Äquivalenzrelation durch 
+\[
+t\sim s : \iff \begin{cases}
+\{t, s\} = \{0,1\} & \text{oder}\\
+t=s.	
+\end{cases}
+\]
+Dann ist der Quotientenraum gegeben durch
+\[ 
+{X/\sim} = \bigg\{\left\{0,1\right\}\bigg\}\cup \set{\left\{t\right\}}{t\in (0,1)}.
+\]
+Wir können nun ${{X/\sim}} \cong \Ss^{1}$ zeigen. Wir definieren $\varphi: [0,1]\to \Ss^{1}$ durch $\varphi(t) := \mathrm{e}^{2\pi\mathrm{i}t}$. Dann kommutiert folgendes Diagramm: 
+\[
+\begin{tikzcd}
+{[0,1]} \arrow{r}{t\mapsto [t]_{\sim}} \arrow[swap]{dr}{\varphi} & {[0,1]/\sim} \arrow{d}{g} \\
+& \Ss^1.
+\end{tikzcd}
+\]
+$g$ ist stetig und bijektiv (stetig, wegen der universellen Eigenschaft der co-induzierten Topologie), $X/\sim$ ist kompakt und $\Ss^1$ ist \ref{T2}. Wegen \Cref{4.9} ist $g$ also ein Homöomorphismus. 
+\end{eg}
+
+\begin{eg}\label{4.15}
+Sei $ X=[0,1]\times [0,1] \subseteq \mathbb{R}^2 $. Wir definieren eine Äquivalenzrelation durch 
+\[
+(t, s) \sim (t', s') :\iff 
+\begin{cases}
+\{t, t'\}= \{0, 1\} \text{ und }s=s', \\
+\{s, s'\}= \{0, 1\} \text{ und }t=t', \\
+(t,s)=(t', s').
+\end{cases}
+\]
+Durch die Äquivalenzrelation werden gegenüberliegende Seiten des Quadrates $ X $ identifiziert. Wir zeigen nun $ X/\sim \cong \mathbb{S}^{1}\times \mathbb{S}^{1} $. 
+
+Sei dazu $ p: X \to  \mathbb{S}^{1}\times \mathbb{S}^{1} $ mit $ p(t, s) = (\mathrm{e}^{2\pi\mathrm{i} t}, \mathrm{e}^{2\pi\mathrm{i}s}) $ und $g: X/\sim\to \mathbb{S}^{1}\times \mathbb{S}^{1}$ mit $ g([(t, s)]_{\sim}) := p(t, s)$. Dann ist $g$ wohldefiniert, weil $p(s, t)=p(s', t')$ genau dann wenn $(t, s) \sim (t', s')  $. Es kommutiert also folgendes Diagramm:
+\[
+\begin{tikzcd}
+{[0,1]^{2}} \quad \arrow{r}{(t, s)\mapsto [(t, s)]_{\sim}} \arrow[swap]{dr}{p} & \quad {[0,1]^{2}/\sim} \arrow{d}{g} \\
+& \Ss^1\times \Ss^1.
+\end{tikzcd}
+\]
+Es ist nicht schwer zu sehen, dass $ g $ eine bijektive Abbildung ist. Weiterhin ist $g$ stetig, wegen der universellen Eigenschaft der co-induzierten Topologie (\Cref{2.16}). Wegen \Cref{4.9} ist $g$ ein Homöomorphismus, was die Behauptung zeigt. 
+\end{eg}
+
+\begin{thr}\label{4.16}
+Sei $ p: X\to Y $ eine stetige Surjektion. Ist $ p $ entweder offen oder abgeschlossen, dann ist $ p $ eine Quotientenabbildung. 
+\end{thr}
+\begin{proof}
+Sei $ p $ offen, der Fall $ p $ abgeschlossen wird analog gezeigt. Sei $ U\subseteq Y $ offen, dann ist wegen der Stetigkeit $ p^{-1}[U]\subseteq X $ offen. Benutzen wir die Surjektivität von $ p $ erhalten wir
+\[
+U \overset{\text{$ p $ surjektiv}}{=} p\left[p^{-1}[U]\right]\subseteq Y
+\]
+offen, weil $ p $ offen ist. 
+\end{proof}
+
+\begin{rmk}\label{4.17}
+Die Umkehrung ist im Allgemeinen falsch: Definieren wir zum Beispiel 
+\[
+p: \mathbb{R}\to Y:=\{a, b\}, \quad x \mapsto 
+\begin{cases}
+a, & x<0\\
+b, & x\leq 0, 
+\end{cases}
+\]
+wobei $ Y $ die Topologie $ \{\emptyset, X, \{a\}\} $ trägt. Dann ist $ p $ eine Quotientenabbildung. Aber $ p $ ist nicht offen, denn $ p[(0,1)] =\{b\}$ und $ p $ ist nicht abgeschlossen, denn $ p[[-2, -1]] = \{a\} $.
+Dieses Beispiel zeigt auch: $ X $ \ref{T2} impliziert \emph{nicht}, dass $ X/\sim $ \ref{T2} ist. 
+\end{rmk}
+\todo{Hier war die Übung die falsch war. Finde heraus, ob etwas ähnliches gilt}
+\begin{defn}\label{4.18}
+Seien $ X, Y $ topologische Räume, $ A\subseteq X $ abgeschlossen und sei $ f: A\to Y $ stetig. Wir definieren eine Äquivalenzrelation $ \sim $ auf $ X+Y $ durch die Äquivalenzklassen
+\[ 
+\begin{cases}
+f^{-1}[\{y\}] + \{y\} & \text{für }y\in f[A]\\
+\{p\} & \text{für }p \in X \setminus A + Y \setminus f[A].
+\end{cases}
+\]
+Der Raum $ X+_{f}Y := X+Y/ \sim $ heißt \emph{Verklebung von $ X $ und $ Y $ entlang von $f$}. 
+\end{defn}
+
+
+
+% TODO: \usepackage{graphicx} required
+\begin{figure}[h]
+\centering
+\includegraphics[page=3, width=0.9\textwidth, trim = 100 350 75 100, clip]{Figures/Topologie_Grafiken.pdf}
+\caption{Illustration von \Cref{4.18}. Die Menge $ X +_{f}Y $ erhalten wir, indem wir die disjunkte Vereinigung $ X+ Y $ am Graphen von $ f $ zusammenkleben.}
+\label{IllustrationVerklebung}
+\end{figure}
+
+
+
+\begin{rmk}\label{4.19}
+Sei $ \iota: Y\to X+Y $ und $\pi: X+Y \to X+_{f}Y $ die kanonischen Einbettungen. Dann ist $ \pi\circ \iota: Y \to X+_{f}Y $ eine abgeschlossene Einbettung. Um dies zu beweisen, reicht es zu zeigen, dass $ \pi\circ \iota $ injektiv, stetig und abgeschlossen ist. 
+\end{rmk}
+
+\begin{eg}\label{4.20}
+Sei $ X=Y= \DD_{n}:=\set{x\in \mathbb{R}_{n}}{\norm{x}_{2}\leq 1} $. Sei weiter $ f:\mathbb{S}^{n-1}\to\mathbb{S}^{n-1} $ die Identität. Wir behaupten nun 
+\begin{equation}\label{XpfYhomoeoSn}
+X+_{f} Y \cong \Ss^n
+\end{equation}
+Um die Behauptung zu zeigen betrachten wir die Abbildungen
+\[ 
+\begin{tikzcd}
+X + Y \arrow{r}{\varphi} \arrow{d}{} & \mathbb{S}^{n}, \\
+\underbrace{X +_{f} Y}_{\text{kompakt}} \arrow{ru}{\cong}
+\end{tikzcd}
+\]
+wobei $ \varphi $ durch 
+\[
+\varphi: \mathbb{D}^{n} + \mathbb{D}^{n} \to \mathbb{S}^{n}, \quad p \mapsto \begin{cases}
+\left(p, \sqrt{1- \norm p^{2}}\right), &p\in X; \\
+\left(p, - \sqrt{1- \norm p^{2}}\right), & p\in Y
+\end{cases}
+\]
+gegeben ist. Wegen \Cref{4.9} folgt also die Behauptung. 
+\end{eg}
+
+\begin{defn}\label{4.21}
+Sei $ A\subseteq X $ abgeschlossen und nicht leer. Wir definieren eine Äquivalenzrelation
+\[ 
+\sim := \set{(x, y)\in X\times X}{x, y\in A} \cup \set{(x,x)}{x\in X}.
+\]
+Wir setzen nun $ X/A := X/\sim $ und sagen, \emph{$ X/A $ entsteht durch Zusammenschlagen von $ A $}. 
+\end{defn}
+
+%\begin{eg}\label{4.22}
+\todo{Beispiel 4.22}
+%\end{eg}
+
+\begin{eg}\label{4.23}
+Sei $ X=\mathbb{S}^{2} $ und $\sim := \set{(x, y)}{x=\pm y \text{ mit } x, y\in \mathbb{S}^{2}}$. Dann gilt $ \mathbb{S}^{2}/\sim \cong \mathbb{R}P^{2} $, denn: $ \mathbb{S}^{2} \hookrightarrow \mathbb{R}^{3}\setminus \{0\} \to \mathbb{R} P^{2}$ ($ \mathbb{S}^{2}/\sim $ ist \ref{T2}, weil die Äquivalenzklassen stetig sind und $ \RR^{3}\setminus\{0\} $\ref{T4} ist). \todo{Überarbeiten}
+\end{eg}
+\todo{Restliche Beispiele in diesem Kapitel}
+\section{Homotopien}
+
+\begin{defn}\label{4.26}
+Seien $ X, Y $ topologische Räume. Eine stetige Abbildung $ H:[0,1]\times X \to Y $ heißt \emph{Homotopie}. Für zwei stetige Funktionen $ f, g: X \to Y $, dass sie \emph{homotop} sind, falls eine Homotopie $ H:[0,1]\times X \to Y $ gibt, sodass 
+\[
+H(0, x) = f(x) \quad H(1, x) = g(x) \quad \text{für alle }x\in X.
+\]
+In diesem Falle sagen wir, dass $ H $ eine \emph{Homotopie von $f$ nach $g$} ist.
+\end{defn}
+\begin{ex}\label{homotopistequivalence}
+Zeigen Sie, dass 
+\[
+f\sim g :\iff f, g\text{ sind homotop}
+\]
+eine Äquivalenzrelation auf $\hom(X, Y)$ definiert. 
+\hint{\[ \hom(X, Y) := \set{f\in \abb(X, Y)}{f \text{ ist stetig}}. \]}
+\end{ex}
+
+\begin{eg}\label{4.27}
+Zwei stetige Abbildungen $ f, g: X\to \mathbb{R} $ sind immer homotop mit der Homotopie
+\[ 
+H:X\times [0,1]\to \mathbb{R}, \quad (t, x) \mapsto (1-t)f(x) + tg(x).
+\]
+Allgemeiner gilt dies, wenn $ \mathbb{R} $ durch eine beliebige konvexe Teilmenge von $ \mathbb{R}^{n} $ ersetzt wird.
+\end{eg}
+
+\begin{thr}\label{4.28}
+Homotopie ist eine Äquivalenzrelation auf $ \hom(X, Y) $. 
+\end{thr}
+\begin{proof}
+Siehe \Cref{homotopistequivalence}. \todo{Mache den Beweis trotzdem}
+\end{proof}
+
+\begin{defn}\label{4.29}
+Wir definieren $ [X, Y]:= \hom(X, Y)/\sim $, wobei $ \sim $ die Homotopieäquivalenzrelation ist. Die Elemente von $ [X, Y] $ heißen dann \emph{Homotopieäquivalenzklassen}. Weiter heißt $ f:X\to Y $ \emph{nullhomotop}, falls $ f\sim \operatorname{const} $. 
+\end{defn}
+
+\begin{defn}\label{4.30}
+Eine stetige Abbildung $ \gamma:[0,1]\to X $ heißt \emph{Weg} von $ \gamma(0) $ nach $ \gamma(1) $. 
+\end{defn}
+Einen Weg können wir stets als Homotopie $ [0,1]\times \{x\} \to X$ auffassen. Daher ist die Existenz eines Weges zwischen zwei Punkten eine Äquivalenzrelation auf $ X $. Diese Äquivalenzklassen heißen \emph{Wegzusammenhangskomponenten von $ X $}. $ X $ heißt \emph{wegzusammenhängend}, falls es aus einer Wegzusammenhangskomponenten besteht, d.h. falls es von $ x\in X $ zu allen Punkten von $ X $ einen Weg gibt. 
+\begin{ex}\label{4.31}
+Zeigen Sie: Ist $ X $ wegzusammenhängend, dann ist es auch zusammenhängend. Die umgekehrte Implikation ist nicht wahr.
+\end{ex}
+
+\begin{thr}\label{4.32}
+Seien $ f_{0}, f_{1}: X\to Y $ stetig und homotop und auch $ g_{0},g_{1}: Y\to Z $ stetig und homotop. Dann sind $ g_{0}\circ f_{0} $ und $ g_{1} \circ f_{1} $ stetig und homotop.
+\end{thr}
+\begin{proof}
+Sei $ F $ eine Homotopie von $ f_{0} $ nach $ f_{1} $ und $ G $ eine Homotopie von $ g_{0} $ nach $ g_{1} $, d.h. $F$ und $G$ sind stetig und erfüllen 
+\[
+F(0, \cdot) \equiv f_{0}, \quad F(1, \cdot)\equiv f_{1}, \quad G(0, \cdot) \equiv g_{0}, \quad G(1, \cdot)\equiv g_{1}.
+\]
+Nun ist $ g_{0}\circ F $ eine Homotopie von $ g_{0}\circ f_{0} $ nach $ g_{0}\circ f_{1} $. Weiter ist 
+\[
+[0, 1]\times X \xrightarrow{\id \times f} [0, 1]\times Y \xrightarrow{G} Z
+\]
+eine Homotopie von $ g_{0}\circ f_{1} $ nach $ g_{1}\circ f_{1} $. Weil die Homotopie zweier Funktionen eine Äquivalenzrelation ist (\Cref{4.28}), folgt das Resultat.
+\end{proof}
+
+Falls $ g:Y\to Z $ stetig ist, dann ist 
+\[
+g_{\star}:[X, Y] \to [X, Z], \quad [f] \mapsto [g\circ f]
+\]
+eine Abbildung (d.h es ist wohldefiniert). Ist weiter $ h: Z\to W $ auch stetig, dann finden wir leicht, dass folgendes Diagramm kommutiert:
+\[ 
+\begin{tikzcd}
+\text{$[X, Y]$}\arrow{r}{g_{\star}} \arrow[bend right=50]{rr}{(h\circ g)_{\star}} & \text{$ [X, Z] $} \arrow{r}{h_{\star}} & \text{$ [X, W] $}.\\
+\end{tikzcd}
+\]
+Außerdem gilt $ (\id_{Y})_{\star} = \id_{[X, Y]} $.
+\begin{thr}\label{4.33}
+Sind $ g, g': Y\to Z $ homotop, dann ist $ g_{\star}=(g')_{\star} $.
+\end{thr}
+\begin{proof}
+Es gilt
+\[ 
+g_{\star}([f]) = [g\circ f] \overset{\text{\Cref{4.32}}}{=} [g'\circ f] = g_{\star}([f]). \qedhere
+\]
+\end{proof}
+\begin{rmk}\label{4.34}
+Sei $ X=\{x\} $. Dann ist $ \hom(\{x\}, Y)=Y $ und $ [X, Y] $ sind die Wegzusammenhangskomponenten von $ Y $. 
+\end{rmk}
+
+\begin{defn}
+Eine stetige Abbildung $ f: X\to Y $ heißt \emph{Homotopieäquivalenz} falls ein stetiges $ g: Y\to X $ existiert, sodass $ f\circ g \sim \id_{Y} $ und $ g\circ f\sim \id_{X} $. Hier ist
+\[
+a\sim b :\iff \exists \text{Homotopie von $a$ nach $b$}.
+\]
+Ist $X$ homotopieäquivalent zu $ \{x\} $, dann heißt $ X $ \emph{zusammenziehbar}.
+\end{defn}
+
+\begin{rmk}\label{4.36}
+Homöomorphismen sind Homotopieäquivalenzen, die Umkehrung dieser Aussage ist allerdings falsch: $ f:\RR^{n}\to \{0\} $ ist eine Homotopieäquivalent. Dies ist der Fall, da für 
+\[
+g: \{0\}\to \RR^n, \quad 0\mapsto 0
+\]
+gilt $ f\circ g =\id_{\{0\}} $ und $ g\circ f \sim \id_{\mathbb{R}^{n}} $ mit der Homotopie
+\[
+[0,1]\times \mathbb{R}^{n} \to \RR^{n}, \quad (t, x) \mapsto tx.
+\]
+\end{rmk}
+\begin{eg}\label{4.38}
+Eine Menge $ A\subseteq \mathbb{R}^{n} $ heißt \emph{sternförmig}, falls es $ a_{0}\in A $ gibt sodass 
+\[
+(1-t)a_{0} + tb \in A \quad \text{für alle }t\in [0,1] \text{ und }b\in A.
+\]
+Wir behaupten nun, dass $ A\subseteq \RR^n $ sternförmig auch zusammenziehbar ist. Um dies zu überprüfen setzen wir $ f: A \to \{c\} $ und $ g:\{c\}\to A $ mit $ g(c) = a_{0} $, wobei $ a_{0} $ wie oben zu wählen ist. Dann gilt $ f\circ g = \id_{\{c\}} $ und $ g\circ f \sim \id_{A} $ (d.h. sind homotop) mit der Homotopie
+\[
+[0,1]\times A, \quad (t, x)\mapsto  (1-t)a_{0}+tx.
+\]
+\end{eg}
+
+\begin{eg}
+Die Abbildung $ f: \RR^n\setminus \{0\} \to \Ss^{n-1}$ mit $ f(x) = \frac{x}{\norm{x}_{2}} $ ist eine Homotopieäquivalenz. Denn $ g:=\id: \Ss^{n-1} \hookrightarrow \RR^n\setminus \{0\} $ ist eine stetige Einbettung. Dann ist $ f\circ g= \id_{\Ss^{n-1}} $ und $ g\circ f\sim \id_{\RR^n\setminus\{0\}} $ mit der Homotopie
+\[
+[0, 1]\times (\RR^n\setminus\{0\}) \to \RR^n\setminus\{0\}, \quad (t,x)\mapsto (1-t)\frac{x}{\norm x_{2}} + tx\quad (\neq 0).
+\]
+\end{eg}
+
+\begin{ex}\label{EX9.2}
+Zeigen Sie: Falls $ X $ zusammenziehbar ist, dann ist $ \#[Z, X] =1$.
+Zeigen Sie, dass die folgenden Aussagen äquivalent sind: 
+\begin{enumerate}[label=\textit{\roman*})]
+\item X ist zusammenziehbar;
+\item $ \id_{X} $ ist nullhomotop.
+\end{enumerate}
+\end{ex}
+
+\begin{defn}\label{4.39}
+Eine Menge $ A\subseteq X $ heißt \emph{Retrakt von $ X $}, falls es eine stetige Abbildung $ r:X\to A $ mit $ \eval{r}_{A} = \id_{A} $ gibt. 
+\end{defn}
+
+\begin{prop}\label{4.40}
+Sei $ A\subseteq X $ ein Retrakt von $ X $ und $ X $  zusammenziehbar. Dann ist auch $ A $ zusammenziehbar.
+\end{prop}
+
+\begin{proof}
+Sei $ \iota\hookrightarrow X $ die Inklusion und $ r: X\to A $ stetig mit $ \eval{r}_{A} = \id_{A} $. Dann gilt $ r \circ \iota= \id_{A} $ und daher kommutiert das Diagramm
+\[ 
+\begin{tikzcd}
+\text{$ [A, A] $} \arrow{r}{\iota_{\star}} \arrow[bend right=50]{rr}{\id} & \text{$ [A, X] $} \arrow{r}{r_{\star}} & \text{$ [A, A] $}.\\
+\end{tikzcd}
+\]
+$ X $ ist zusammenziehbar also $ \#[A, X] =1$. Da $ r_{\star} $ surjektiv ist, ist auch $\#[A, A] = 1  $. Es folgt: $ \id_{A} $ ist nullhomotop; dies impliziert, dass $ A $ zusammenziehbar ist.
+\end{proof}
+
+
+\chapter{Selbstabbildungen des Kreises}
+
+Das Ziel dieses Kapitels ist das Studium der Menge $ [\mathbb{S}^{1}, \mathbb{S}^{1}] $. Sei 
+\begin{equation}\label{defnofp}
+p: \RR\to \Ss^1, \quad  s\mapsto \mathrm{e}^{2\pi\mathrm{i}s} 
+\end{equation} 
+und sei weiterhin $ f: X\to \Ss^1$ eine stetige Funktion.
+\begin{defn}\label{5.0}
+Eine stetige Funktion $ h: X\to \mathbb{R} $ (in Zeichen $ h\in \hom(X, \RR) $) heißt \emph{Hochhebung} von $f$ (bezüglich $ p $), falls $ p\circ h = f $ d.h. das folgende Diagramm kommutiert: 
+\[ 
+\begin{tikzcd}
+X \arrow{r}{h} \arrow{dr}{f} & \RR \arrow{d}{p} \\
+& \Ss^1.
+\end{tikzcd}
+\]
+\end{defn}
+\todo{Figure mit Spirale, S.49}
+
+\begin{thr}[Hochhebungssatz]\label{5.1}
+Sei $ X $ ein topologischer Raum und $ h: X\to \mathbb{R} $ stetig. Sei weiter $ F:[0,1]\times X \to \Ss^1 $ stetig mit $ F(0, \cdot) \equiv p\circ h $. Dann gibt es genau eine stetige Funktion $ H:[0,1]\times X\to \RR $ sodass $ p\circ H = F $ und $ H(0, \cdot)\equiv h $ ($ p $ ist durch \eqref{defnofp} gegeben).
+\end{thr}
+Der Satz besagt, dass folgendes Diagramm kommutiert: 
+\begin{equation}\label{sterndiagramm}
+\begin{tikzcd}
+X \arrow{r}{h} \arrow[swap]{d}{x\mapsto (x, 0)} & \RR \arrow{d}{p} \\
+\text{$ [0,1]\times X $} \arrow{r}{F}\arrow[dotted]{ur}{\exists! H} & \Ss^1.
+\end{tikzcd}
+\end{equation}
+
+
+%\begin{proof}[Beweis von \Cref{5.1}]
+%\begin{step}[Eindeutigkeit.]
+%Seien $ H', H:[0,1]\times X \to \RR $ stetige Funktionen, sodass \eqref{sterndiagramm} kommutiert. Dann
+%\begin{align*}
+%\big(p\circ (H-H')\big)(t, x) 
+%&
+%= \mathrm{e}^{2\pi\mathrm{i}\big( H(t, x)- H'(t, x)\big)} =\frac{\mathrm{e}^{2\pi\mathrm{i}H(t, x)}}{\mathrm{e}^{2\pi\mathrm{i}H'(t, x)}}\\
+%&
+%= \frac{p(H(t,x))}{p(H'(t, x))} = \frac{F(x, t)}{F(x, t)} = 1\in \Ss^1
+%\end{align*}
+%für alle $ (t, x)\in [0,1]\times X $. Also ist $ (H-H')(t, x) \in p^{-1}[\{1\}]\in \ZZ\subseteq \RR$. Sei nun $ X' $ eine Zusammenhangskomponente von $ X $ d.h. $ [0,1]\times X' $ ist zusammenhängend. Da $ H - H' $ stetig ist und der Bildraum diskret, muss $ \eval{H-H'}_{[0,1]\times X'}\equiv \operatorname{const} $ sein. Es gilt nun 
+%\[
+%H(0, x) = h(x) = H'(0, x) \quad \text{für alle }x\in X', 
+%\]
+%also $  \eval{H-H'}_{[0,1]\times X'}\equiv 0 $.
+%Aber $ X' $ wurde arbiträr gewählt, daher gilt $ H=H' $ überall. 
+%\end{step}
+%\begin{step}[Existenz falls $ X=\{x\} $.] Sei zunächst $ X= \{x\} $. Dann können wir $ F $ als Weg $ [0, 1]\to \Ss^1 $ und $ h $ als Element von $ \RR $ auffassen. Sei
+%\[
+%\varM := \set{s\in [0,1]}{\eval{F}_{[0, s]} \text{ hat eine Hochhebung zum Anfangswert $h$}}. 
+%\]
+%Wir zeigen $ \sup\varM = 1 $. Offensichtlich ist $ 0\in \varM $. Sei $ t_{0}:= \sup\varM $. Wir zeigen nun per Widerspruch, dass $ t_{0}=1 $ ist. Wir nehmen also an, dass $ t_{0}<1 $ und ohne Beschränkung der Allgemeinheit $ F(t_{0}) \neq 1 $. Wir wählen $ \varepsilon>0 $ sodass 
+%\[
+%F\left[B_{\varepsilon}^{\RR}(t_{0})\cap [0, 1]\right]\subseteq \Ss^1\setminus\{0\} \quad \text{und}\quad \varepsilon+ t_{0} \leq 1 
+%\]
+%und falls $ t_{0}>0 $ auch $ t_{0}-\frac{\varepsilon}{2}\geq 0 $. Setze
+%\[
+%t_{1}:= \begin{cases}
+%0, & \text{falls $ t_{0}=0 $,}\\
+%t_{0}-\frac{\varepsilon}{2}, & \text{falls $ t_{0}>0 $}.
+%\end{cases}
+%\]
+%Wir finden nun eine Hochhebung $ \tilde H:[0, t_{1}]\to \RR $ von $ \eval F_{[0, t_{1}]} $ zum Anfangswert $ h $.\todo{Figure, S.51} \todo{Weiter}
+%\end{step}
+%\end{proof}
+
+\begin{proof}[Beweis von \Cref{5.1}]
+\begin{step}[Eindeutigkeit.]
+Seien $ H', H:[0,1]\times X \to \RR $ stetige Funktionen, sodass \eqref{sterndiagramm} kommutiert. Dann
+\begin{align*}
+\big(p\circ (H-H')\big)(t, x) 
+&
+= \mathrm{e}^{2\pi\mathrm{i}\big( H(t, x)- H'(t, x)\big)} =\frac{\mathrm{e}^{2\pi\mathrm{i}H(t, x)}}{\mathrm{e}^{2\pi\mathrm{i}H'(t, x)}}\\
+&
+= \frac{p(H(t,x))}{p(H'(t, x))} = \frac{F(x, t)}{F(x, t)} = 1\in \Ss^1
+\end{align*}
+für alle $ (t, x)\in [0,1]\times X $. Also ist $ (H-H')(t, x) \in p^{-1}[\{1\}]\in \ZZ\subseteq \RR$. Sei nun $ X' $ eine Zusammenhangskomponente von $ X $ d.h. $ [0,1]\times X' $ ist zusammenhängend. Da $ H - H' $ stetig ist und der Bildraum diskret, muss $ \eval{H-H'}_{[0,1]\times X'}\equiv \operatorname{const} $ sein. Es gilt nun 
+\[
+H(0, x) = h(x) = H'(0, x) \quad \text{für alle }x\in X', 
+\]
+also $  \eval{H-H'}_{[0,1]\times X'}\equiv 0 $.
+Aber $ X' $ wurde arbiträr gewählt, daher gilt $ H=H' $ überall. 
+\end{step}
+
+\begin{step}[Existenz falls $ X=\{x\} $.] Sei zunächst $ X= \{x\} $. Dann können wir $ F $ als Weg $ [0, 1]\to \Ss^1 $ und $ h $ als Element von $ \RR $ auffassen. Sei
+\[
+\varM := \set{s\in [0,1]}{\eval{F}_{[0, s]} \text{ hat eine Hochhebung zum Anfangswert $h$}}. 
+\]
+Zuerst bemerken wir, dass $ \varM $ abgeschlossen ist, denn: Falls $ \eval F_{[0,s)} $ eine Hochhebung $ \tilde F $ zum Anfangswert $h$ hat, muss 
+\[
+\lim_{t\nearrow s} \tilde F(t) 
+\]
+existieren (das heißt, $ \tilde F $ weist kein Unendlichkeitsstreben auf), ansonsten wäre der Grenzwert
+\[
+\lim_{t\nearrow s} F(t) = \lim_{t\nearrow s} (p\circ \tilde F)(t)
+\]
+nicht definiert, was ein Widerspruch zu der Stetigkeit von $ F $ wäre. 
+
+Wir zeigen $ \sup\varM = 1 $. Offensichtlich ist $ 0\in \varM $. Sei $ t_{0}:= \sup\varM $. Wir zeigen nun per Widerspruch, dass $ t_{0}=1 $ ist. Wir nehmen also an, dass $ t_{0}<1 $ und ohne Beschränkung der Allgemeinheit $ F(t_{0}) \neq 1 $. Wir wählen $ \varepsilon>0 $ sodass 
+\[
+F\left[B_{\varepsilon}^{\RR}(t_{0})\cap [0, 1]\right]\subseteq \Ss^1\setminus\{0\} \quad \text{und}\quad \varepsilon+ t_{0} \leq 1 
+\]
+und falls $ t_{0}>0 $ auch $ t_{0}-\frac{\varepsilon}{2}\geq 0 $. Setze
+\[
+t_{1}:= \begin{cases}
+	0, & \text{falls $ t_{0}=0 $,}\\
+	t_{0}-\frac{\varepsilon}{2}, & \text{falls $ t_{0}>0 $}.
+	\end{cases}
+	\]
+	Wir finden nun eine Hochhebung $ \tilde H:[0, t_{1}]\to \RR $ von $ \eval F_{[0, t_{1}]} $ zum Anfangswert $ h $. Da 
+	\[
+	p^{-1}\left[\mathbb{S}^{1}\setminus\{0\}\right] = \union_{n\in \mathbb{Z}} (n, n+1) 
+	\]
+	finden wir ein eindeutiges $ n\in \mathbb{N} $ sodass $ \tilde H(t_{1})\in (n, n+1) $. Setzen wir $ p_{n}:= \eval{p}_{(n, n+1)} \xrightarrow{\sim}\mathbb{S}^{1}\setminus\{0\}$ für dieses $ n $ und $ \tilde H':[t_{0}, t_{0}+\varepsilon]\to \mathbb{R} $ mit $ t\mapsto p_{n}^{-1}(F(t)) $ ($ p_{n} $ ist bijektiv), erhalten wir durch 
+	\[
+	[0, t_{0}+\varepsilon]\ni t \mapsto \begin{cases}
+		\tilde H(t), & t\leq t_{1}, \\
+		\tilde H'(t) & t\geq t_{1}
+	\end{cases}
+	\]
+	eine Hochhebung von $ \eval F_{[0, t_{0}+\varepsilon]} $ im Widerspruch zur Wahl von $ t_{0} $. Also folgt $ \sup\varM=1 $. 
+	\end{step}
+\begin{step}[Existenz für allgemeines $ X $.] Für jedes $ x\in X $ wählen wir eine Hochhebung $ H_{x}:[0,1]\to \mathbb{R} $ von $ [0,1]\to\mathbb{S}^{1} $, $ t\mapsto F(t, x) $ zum Anfangswert $ h(x) $. Es bleibt zu zeigen, dass 
+	\[
+	H:[0,1]\times X \to \mathbb{R}, \quad (t, x) \mapsto H_{x}(t)
+	\]
+	stetig ist. 
+\end{step}
+\end{proof}
+
+
+
+Als nächstes wollen wir jeder Funktion $ f:\Ss^1 \to \Ss^1 $ eine Zahl $ \deg f\in \ZZ $ zuordnen. Sei dazu $ q:=\eval{p}_{[0,1]}:[0,1]\to\mathbb{S}^{1} $, $ t\mapsto \mathrm{e}^{2\pi\mathrm{i}t} $ und $ F:= f\circ q $. Nach \Cref{5.1} existiert eine Hochhebung $ \tilde f:[0,1]\to \RR $ von $ F $. Für jedes Urbild von $ f(1) $ unter $ p $ gibt es genau eine Hochhebung mit diesem Anfangswert, d.h. sind alle Hochhebungen von der Form $ \tilde f + n $ mit $ n\in \ZZ $. Die Zahl $ \tilde f(1) - \tilde f(0) $ hängt nicht von der Wahl der Hochhebung ab. Mit
+\[
+p\left(\tilde f(1)- \tilde f(0)\right) = \frac{p(\tilde f(1))}{p(\tilde f(0))} = \frac{f(q(1))}{f(q(0))} \overset{\substack{q(1)=q(0)}}{=} 1, 
+\]
+sehen wir, dass $ \tilde f(1) - \tilde f(0) \in p^{-1}\{1\} = \mathbb{Z}$ liegen muss. 
+\begin{defn}\label{5.2}
+Wir setzen $ \deg f := \tilde f(1) - \tilde f(0) \in \ZZ $ und nennen dies den \emph{Abbildungsgrad von $ f $. }
+\end{defn}
+
+\begin{eg}\label{5.3}
+Sei $ e_{n}: \mathbb{S}^{1}\to \mathbb{S}^{1} $, $ e_{n}(z)= z^{n} $ mit $ n\in \ZZ $. Dann kommutiert das Diagramm 
+\[ 
+\begin{tikzcd}
+& &  \RR \arrow{d}{p = \exp\left\{2\pi\mathrm{i}\cdot \right\}}\\
+\text{$ [0,1] $} \arrow{urr}{\tilde e_{n}(t)}\arrow{r}{q}	& \Ss^{1} \arrow{r}{e_{n}} & \Ss^{1}\\[-10mm]
+t & \mapsto & \mathrm{e}^{2\pi\mathrm{i}nt}, 
+\end{tikzcd}
+\]
+wobei $ \tilde e_{n}(t)= nt $, also ist $ \deg e_{n} = n $. 
+\end{eg}
+
+\begin{thr}\label{5.4}
+Seien $ f, g: \Ss^1 \to \Ss^1 $ stetig und homotop. Dann gilt
+\[
+\deg f = \deg g, 
+\]
+das heißt, $ \deg $ ist invariant bezüglich Homotopien. 
+\end{thr}
+
+\begin{proof}
+Sei $\tilde f:[0, 1]\to \RR$ eine Hochhebung von $f\circ q$ und sei $H: [0, 1]\times \Ss^1\to \Ss^1$ eine Homotopie von $f$ nach $g$. Nach \Cref{5.1} finden wir genau ein $F:[0, 1]^2 \to \RR$, eine Hochhebung von $H\circ (\id_{[0,1]} \times q)$ mit Anfang $\tilde f$ d.h. es kommutiert
+%\[
+%\begin{tikzcd}
+%{[0, 1]}\arrow{r}{x\mapsto(0, x)} \arrow{dd}{\tilde f}   &{ [0, 1]^2} \arrow[dotted]{ddl}{\exists! F}\arrow{dr}{\id \times q} & \\
+%& &{[0, 1]\times \Ss^1}\arrow{dl}{H} \\
+%\RR \arrow{r}{p}& \Ss^1. &     
+%\end{tikzcd}    
+%\]
+\[ 
+\begin{tikzcd}
+	{[0,1]} \arrow{rr}{\tilde f}\arrow[swap]{d}{(0, \id_{[0,1]})} & & \RR \arrow{d}{p}\\
+	{[0,1]\times [0,1]} \arrow[swap]{r}{\id_{[0,1]}\times q} \arrow[dotted]{urr}{F}& {[0,1]\times \Ss^1}\arrow[swap]{r}{H} & \Ss^1	
+\end{tikzcd}
+ \]
+Dann ist $F(1, \cdot)$ eine Hochhebung von $H(1, \cdot) \equiv g\circ q$, das heißt
+\[
+\deg g = F(1, 1) - F(1, 0).
+\]
+Wegen $q(1)=q(0)$ gilt auch $ H\circ (\id\times q)(\cdot , 1) \equiv H(\id\times q)(\cdot 0) $, also sind $F(\cdot, 0)$ und $F(\cdot, 1)$ Hochhebungen desselben Weges. Daher ist $F(\cdot, 1)- F(\cdot, 0)$ eine konstante Funktion und 
+\[
+\deg g = F(1, 1) - F(1, 0) = F(0, 1) - F(0, 0) = \deg f. \qedhere
+\]
+\end{proof}
+
+% \begin{proof}
+% Sei $ \tilde f:[0,1]\to\RR $ eine Hochhebung von $ f\circ q $ und $ F:[0,1]\times \mathbb{S}^{1}\to \mathbb{S}^{1} $ eine Homotopie von $ f $ nach $ g $. Dann finden wir (genau) eine Hochhebung $ H $ von $ F(\id_{[0,1]}\times q) $ mit Anfang $ \tilde f $. Wir können es an folgendem Diagramm veranschaulichen: 
+% \[ 
+% \begin{tikzcd}
+% 	\text{$ [0, 1] $}\arrow{r}{\tilde f}\arrow[swap]{d}{t\mapsto (0, t)} & \RR \arrow{d}{p}\\
+% 	\text{$ [0,1]\times [0,1] $} \arrow[swap]{r}{	\substack{\\[5mm](0, t)\mapsto (0, g(t))\mapsto f(q(t))\\(1, t) \mapsto (1, g(t)) \mapsto g(q(t))}	}\arrow[dotted]{ur}{\exists!H} & \text{$ [0,1]\times \Ss^1. $}
+% \end{tikzcd}
+%  \]
+% Also ist $ [0,1]\to\RR $, $ t\mapsto H(t,1) $ eine Hochhebung von $ g\circ q $. Wir folgern 
+% \begin{align*}
+% \deg g &= H(1,1) - H(1, 0)\quad \text{und}\\
+% \deg f &= H(0, 1) - H(0,0).
+% \end{align*}
+% Wir zeigen nun, dass $ \gamma:[0,1]\to\RR $, $ t\mapsto H(t, 1) - H(t, 0) $ konstant ist. Dazu reicht es zu zeigen, dass $ \gamma(t)\in \ZZ $ für alle $t\in [0,1]$, weil $\gamma$ stetig ist und $ [0,1] $ zusammenhängend ist. Dies ist aber erfüllt, denn
+% \[ 
+% p(\gamma(t)) = p\big(H(t, 1)- H(t, 0)\big) = \frac{p(H(t, 1))}{p(H(t, 0))} = \frac{F(t, q(1))}{F(t, q(0))} \overset{\substack{q(0)=1\\q(1)=1}}{=} 1.  \qedhere
+% \]
+% \end{proof}
+
+Die Abbildung $ \deg: [\mathbb{S}^{1}, \mathbb{S}^{1}]\to \mathbb{Z} $, $ [f]\to \deg f $ ist also wohldefiniert (d.h. es ist eine Abbildung) und außerdem surjektiv wegen \Cref{5.3}.
+
+Die Menge $ \hom(\mathbb{S}^{1}, \mathbb{S}^{1}) $ wird zu einer Gruppe durch die Verknüpfung
+\[
+f \star g :=(z\mapsto f(z)\cdot g(z)), 
+\]
+wobei $ \cdot $ hier die gewöhnliche Multiplikation in $ \mathbb{C} $ bezeichnet. Das neutrale Element dieser Gruppe ist die konstante Funktion $ z\mapsto 1 $. 
+\begin{ex}\label{5.5}
+Obige Gruppenstruktur induziert eine Gruppenstruktur auf den Homotopieklassen $ [\mathbb{S}^{1}, \mathbb{S}^{1}] $. 
+\end{ex}
+
+\begin{thr}\label{5.6}
+$ \deg:[\mathbb{S}^{1}, \mathbb{S}^{1}] \to \mathbb{Z}$ ist ein Gruppenhomomorphismus. 
+\end{thr}
+\begin{proof}
+Es reicht zu zeigen, dass $ \deg(f\cdot g) = \deg f + \deg g $ gilt. Falls $ \tilde f: [0,1]\to \mathbb{R} $ eine Hochhebung von $ f\circ q $ ist und $ \tilde g: [0,1]\to \mathbb{R} $ eine Hochhebung von $ g\circ q $ ist, dann ist $ \tilde f + \tilde g $ eine Hochhebung von $ (f\cdot g) \circ q $. 
+Daher
+\[ 
+\deg (f\cdot g) = (\tilde f + \tilde g)(1) - (\tilde f + \tilde g)(0) = \dots = \deg f + \deg g. \qedhere
+\]
+\end{proof}
+
+\begin{lem}[{\cite[S.165, Hochhebung von Homotopien]{janich_topologie_2008}}]\label{5.7}
+Sei $ X $ ein topologischer Raum, $ F: [0,1]\times X \to \mathbb{S}^{1} $ stetig und $ H:[0,1 ]\times X\to \RR $ sodass $ p\circ H = F $ und
+\begin{itemize}
+\item $ \eval{H}_{\{0\}\times X} $ ist stetig und 
+\item $ \eval{H}_{[0, 1]\times \{x\}} $ ist stetig für alle $ x\in X $.
+\end{itemize}
+Dann ist $ H $ stetig. 
+\end{lem}
+\begin{proof}
+Für ein $ t_{0}\in [0,1] $, $ \varepsilon>0 $ setze $ I_{\varepsilon}(t_{0}) := (t_{0}- \varepsilon, t_{0}+ \varepsilon)\cap [0,1] $. Ein offenes Kästchen $ I_{\varepsilon}(t_{0})\times U $ nennen wir  \emph{klein}, falls $ F[I_{\varepsilon}(t_{0})\times U]\subseteq \Ss^1 $$\setminus$\{1\}.\todo{Stimmt das $ \setminus\{1\} $?} Wir nennen $ I_{\varepsilon}(t_{0})\times U $ \emph{gut}, falls es ein $ t_{1}\in I_{\varepsilon}(t_{0}) $ gibt, sodass $ \eval H_{\{t_{1}\}\times U} $ stetig ist. 
+
+Wir behaupten nun: 
+\begin{equation}\label{5.9Beh1}
+\text{Ist $ I_{\varepsilon}(t_{0}) $ ein kleines gutes Kästchen, dann ist $ \displaystyle \todo{\Phi??}\Phi:=\eval H_{I_{\varepsilon}(t_{0})\times U} $ stetig. }	
+\end{equation}
+Gemäß Voraussetzung finden wir $ z\in \Ss^1 $ mit $ F[I_{\varepsilon}\times U] \subseteq \Ss^1\setminus\{z\}$. Wir nehmen ohne Beschränkung der Allgemeinheit $ z=1 $ an und definiere $ W := \Ss^1\setminus\{1\} $. Dann kommutiert folgendes Diagramm
+\[ 
+\begin{tikzcd}
+&&\ZZ \\
+I_{\varepsilon}(t_{0})\times U	\arrow[dotted]{urr}{\Phi}\arrow{r}{}\arrow{dr}{F \text{ stetig}}& p^{-1}[W] = \union_{n\in \ZZ}(n, n+1) \arrow{d}{p}& \arrow[leftrightarrow]{l}{\cong}\arrow{ld}{(w, m)\mapsto w}\arrow{u}{(w, m)\mapsto m} W\times \ZZ\\
+&W.&\\
+\end{tikzcd}
+\]
+\todo{Wie ist $ \Phi $ hier gewählt??}
+Wir betrachten hier $ \ZZ $ mit der diskreten Topologie. Um \eqref{5.9Beh1} nachzuweisen, reicht es zu zeigen, dass $ \Phi  $ stetig ist. 
+
+Da $ \eval H_{I_{\varepsilon}(t_{0})\times \{u\}} $ stetig ist für alle $ u\in U $, folgt dass $ \eval{\Phi}_{I_{\varepsilon}(t_{0})\times \{u\}} $ stetig ist. Weiter ist $ I_{\varepsilon}(t_{0})\times \{u\} $ zusammenhängend d.h. ist obige Einschränkung von $ \Phi $ sogar konstant. Weil das Kästchen gut ist d.h. $ \eval H_{\{t_{1}\}\times U} $ stetig für ein $ t_{1}\in I_{\varepsilon}(t_{0}) $ folgt, dass $ \eval \Phi_{\{t_{1}\}\times U} $ stetig ist. 
+
+Weil $ \eval \Phi_{I_{\varepsilon}(t_{0})\times \{u\}} $ konstant ist, kommutiert das Diagramm
+\[ 
+\begin{tikzcd}
+I_{\varepsilon}(t_{0})\times U \arrow{r}{\Phi} \arrow[swap]{d}{\substack{(t, u)\mapsto (t_{1}, u)\\ \text{(stetig)}}}& \ZZ \\
+\{t_{0}\}\times U,  \arrow[swap]{ur}{\substack{\eval \Phi_{\{t_{1}\}\times U}\\\text{(stetig)}}} & \\
+\end{tikzcd}
+\]
+also ist $ \Phi $ stetig, was \eqref{5.9Beh1} zeigt. 
+
+Sei nun $ x\in X $. Wegen \eqref{5.9Beh1} reicht es zu zeigen, dass es für alle $ t\in [0,1] $ ein kleines gute Kästchen $ I_{\varepsilon}(t_{0}) \times U$ gibt. Sei daher
+\[
+T := \set{t\in [0,1]}{\exists \text{ kleines gutes Kästchen, welches }(t, x)\text{ enthält}}. 
+\]
+Es reicht, nachzuweisen, dass $ T=[0,1] $ ist. Weil $ \eval H_{\{0\}\times X} $ stetig ist, muss $ 0\in T $ gelten. T ist offen in $ [0,1] $ nach Definition, also reicht es zu zeigen, dass:
+\begin{equation}\label{5.9Beh2}
+\text{$ T $ ist abgeschlossen in $ [0,1] $.}
+\end{equation}
+Sei $ t_{0}\in \closure{T} \subseteq [0, 1] $. Da $F$ stetig ist, finden wir $ U\subseteq X $, eine offene Umgebung von $ x $ und ein $ \varepsilon>0 $ sodass
+\[
+F[I_{\varepsilon}(t_{0})\times U]\subsetneq \mathbb{S}^{1}
+\]
+d.h. $ I_{\varepsilon}(t_{0})\times U $ ist ein kleines Kästchen. Da $ t_{0}\in \closure{T} $, folgt $ I_{\varepsilon}(t_{0})\cap T \neq 0 $. Sei $ t_{1}\in I_{\varepsilon}(t_{0})\cap T $. Definitionsgemäß gibt es also ein kleines gutes offenes Kästchen, dass $ (t_{1}, x) $ enthält. Wegen \eqref{5.9Beh1} existiert $ U_{1} \subseteq X$, eine Umgebung von $ x $, sodass $ \eval H_{\{t_{1}\}\times U} $ stetig ist. Das heißt, $ I_{\varepsilon}(t_{0})\times U_{1}\cap U $ ist eine kleines gutes offenes Kästchen, welches $ (t_{0}, x) $ enthält. Daher ist $ t_{0}\in T $. 
+\end{proof}
+
+\begin{rmk}\label{5.8}
+Diese Aussage gilt auch für viel allgemeinere Abbildungen $ p $, nämlich für sogenannte \emph{Überlagerungen}.  Eine stetige Abbildung $ p: E\to Y $ heißt \emph{Überlagerung}, falls ein diskreter Raum $ F $ existiert und wir für alle $ y\in Y $ eine offene Umgebung $ U\subseteq Y $ von $ y $ finden, sodass 
+\[
+\begin{tikzcd}
+p^{-1}[U] \arrow{r}{\cong}\arrow{d}{p} & U \times F \arrow{dl}{(u, f)\mapsto u}\\
+U.
+\end{tikzcd}
+\]
+Der angepasste Beweis ist nicht viel schwieriger, als der, den wir bereits gemacht haben.
+\end{rmk}
+
+\begin{cor}\label{5.9}
+Die Menge $ \mathbb{S}^{1} $ ist nicht zusammenziehbar und insbesondere \emph{kein} Retrakt von $ \mathbb{D}_{2} $. 
+\end{cor}
+
+\begin{proof}
+Wäre $ \mathbb{S}^{1} $ zusammenziehbar, wäre $ \#[\mathbb{S}^{1}, \mathbb{S}^{1}] =1$, siehe \Cref{EX9.2}. Da aber $ \deg $ surjektiv ist, ergibt sich ein Widerspruch.  
+
+Weiter ist $\DD_2$ sternförmig und damit zusammenziehbar (\Cref{4.38}). Wäre $\Ss^1$ ein Retrakt von $\DD_2$, dann wäre $\Ss^1$ nach \Cref{4.40} zusammenziehbar. Widerspruch.
+\end{proof}
+
+\begin{cor}[Brower's Fixpunktsatz für $ \mathbb{D}_{2} $]\label{5.10}
+Sei $ f: \mathbb{D}_{2}\to \mathbb{D}_{2} $ stetig. Dann hat $ f $ einen Fixpunkt, d.h. es existiert $ x\in \mathbb{D}_{2} $ sodass $ f(x) = x $. 
+\end{cor}
+
+\begin{rmk}\label{5.11}
+Die Aussage gilt für alle $ \mathbb{D}_{n} $, $ n\in \mathbb{N}$, wir können sie hier aber nur für $ n=2 $ zeigen. 
+\end{rmk}
+
+\begin{proof}[Beweis von \Cref{5.10}]
+Wir nehmen an, dass $ f $ keinen Fixpunkt hat. Dann können wir für alle $ x\in \mathbb{D}_{2} $ die Zahl $ r(x) $ gemäß
+\[
+\begin{tikzpicture}
+
+% Draw the circle
+\draw[thick] (0,0) circle(2);
+
+% Draw the line passing through the circle
+\draw[thick] (-3, 0) -- (3, 0);
+
+% Add labels for points x and f(x)
+\filldraw (1, 0) circle (2pt); % Point for x
+\filldraw (-1, 0) circle (2pt); % Point for f(x)
+\filldraw (2, 0) circle (2pt); % Point for r(x)
+
+\node[below] at (1, 0) {$x$};  % Label x
+\node[below] at (-1, 0) {$f(x)$};  % Label f(x)
+\node[below right=0.01cm] at (2, 0) {$r(x)$.}; % Label r(x)
+
+\end{tikzpicture}
+\]
+Es lässt sich leicht überprüfen, dass diese Zuordnung stetig ist. Es gilt nun $ r(x) = x $ für alle $ x\in \mathbb{S}^{1} $, d.h. $ \mathbb{S}^{1} $ ist ein Retrakt von $ \mathbb{D}_{2} $. Widerspruch zu \Cref{5.9}.
+\end{proof}
+
+\begin{thr}\label{5.12}
+Die Abbildung $ \deg: [\mathbb{S}^{1}, \mathbb{S}^{1}]\to \ZZ$ ist ein Gruppenisomorphismus.
+\end{thr}
+\begin{proof}
+Wir müssen nur noch die Injektivität zeigen, alles andere wurde bereits bewiesen. Sei $ f\in \ker(\deg) $ und sei $ \tilde f: [0, 1]\to\RR $ eine Hochhebung von $ f\circ q : [0, 1]\to \mathbb{S}^{1} $, wobei $ q:t\in [0,1]\mapsto \mathrm{e}^{2\pi\mathrm{i}t} $ wie üblich ist. Dann gilt $ \tilde f(1) = \tilde f(0) $ weil $ \deg f = 0 $. 
+\[
+\begin{tikzcd}
+& & \RR \arrow{dd}{p}\\
+\text{$ [0,1] $}\arrow{urr}{\tilde f}\arrow{dr}{q}&  \circlearrowleft& \\
+& \Ss^1 \arrow{r}{f} & \Ss^1.\\
+\end{tikzcd}
+\]
+$ q $ ist eine Quotientenabbildung, weil $ q $ stetig und abgeschlossen ist (\Cref{4.16}). Also finden wir wegen \Cref{5.1} ein stetiges $ h: \mathbb{S}^{1}\to \mathbb{R}$ mit $ h\circ q = f $. Es gilt $ p\circ h = f $, weil $ p \circ h \circ q = p\circ \tilde f = f\circ q $ und $ q $ surjektiv ist. Da $ \RR $ zusammenziehbar ist, muss $ h $ nullhomotop sein (\Cref{EX9.2}), also ist $ p\circ h = f $ nullhomotop (\Cref{4.32}) und $ [f] = [0] $. 
+\end{proof}
+
+\chapter{Satz von Borsuk Ulan}
+Dieses Kapitel basiert auf \cite{munkres_topology_2021} \todo{Section 5.7}.
+\todo{Diagramm mit Motivation}
+
+\begin{defn}\label{6.1}
+Für $ x\in \mathbb{S}^{n} $ heißt $ -x $ \emph{Antipode von $ x $} und $ h: \mathbb{S}^{n}\to \mathbb{S}^{n} $ heißt \emph{antipodenerhaltend}, falls $ h(-x) = -h(x) $.  
+\end{defn}
+
+\begin{thr}\label{6.2}
+Sei $ h: \mathbb{S}^{1}\to \mathbb{S}^{1} $ stetig und antipodenerhaltend. Dann ist $ h $ nicht nullhomotop.
+\end{thr}
+
+Um diesen Satz zu beweisen, brauchen wir zuerst folgendes Resultat: 
+\begin{lem}\label{6.3}
+Sei $ f: [0,1]\to \mathbb{S}^{1} $ stetig mit $ f(0)=1 $ und $ f(1) = -1 $. Wir definieren $ g $ gemäß folgendem Diagramm: 
+\[ 
+\begin{tikzcd}
+{[0,1]} \arrow{r}{f}\arrow[swap]{d}{q:t\in [0, 1]\mapsto \mathrm e^{2\pi\mathrm{i}t}} & \Ss^1 \arrow{d}{z\mapsto z^2} \\
+\Ss^1 \arrow{r}{g} & \Ss^1
+\end{tikzcd}
+\]
+Die Abbildung $ g $ ist dann stetig (weil $ [0,1] $ kompakt ist und $ \mathbb{S}^{1} $ \ref{T2} ist folgt, dass $ q $ abgeschlossen ist). Dann ist $ g $ \emph{nicht} nullhomotop, d.h. $ \deg g \neq 0 $. 
+\end{lem}
+\begin{proof}
+Sei $\tilde g:[0,1] \to \RR$ eine Hochhebung von $g\circ q$ entlang von $p: \RR \to \Ss^1, t\mapsto \mathrm{e}^{2\pi\mathrm{i}t}$. Wir setzen $\tilde f := \frac{\tilde g}{2}$ und behaupten
+\begin{equation}\label{pf6.3prop1}
+\text{$\tilde f$ ist eine Hochhebung von $f$ oder $-f$ entlang $p$. }
+\end{equation}
+Für jedes $t\in [0,1]$ gilt
+\[
+(p\circ \tilde f(t))^2 = \mathrm{e}^{2\pi \mathrm{i}\tilde g(t)}  = f(t)^2, 
+\]
+somit ist die Abbildung
+\[
+[0, 1]\to \Ss^1, \quad t\mapsto p(\tilde f(t)) \cdot f(t)^{-1}
+\]
+konstant (entweder $1$ oder $-1$) und stetig. Weil $[0,1]$ zusammenhängend ist, folgt $h\equiv \pm 1$. Dies zeigt \eqref{pf6.3prop1}. Nun gilt
+\[
+p\left( \frac{1}{2}\big( \tilde g(t) + 1 \big) \right) = \underbrace{p\left(\frac{1}{2}\right)}_{=-1}p\left( \frac{1}{2}\tilde g(t) \right) = - p \left(\frac{1}{2} \tilde g(t)\right). 
+\]
+Beachte, dass $\tilde g+1$ auch eine Hochhebung von $g\circ q$ ist. Falls $\tilde f$ eine Hochhebung von $-f$ ist, ersetzen wir $\tilde f$ einfach durch $\tilde f + \frac{1}{2}$ bzw. $\tilde g $ durch $\tilde g+1$, dann ist $\tilde f$ eine Hochhebung von $f$ dank \eqref{pf6.3prop1}.
+
+Wir nehmen nun an, dass $g$ nullhomotop sei und leiten einen Widerspruch her. Ist dies der Fall, dann ist $\deg g=0$ also $\tilde g(0) = \tilde g(1)$. Daraus folgt $\tilde f(0) = \tilde f(1)$ und 
+\[
+1 = f(0) = p\left(\tilde f(0) \right) =  p\left(\tilde f(1) \right) = f(1) = -1, 
+\]
+Widerspruch. 
+\end{proof}
+\begin{proof}[Beweis von \Cref{6.2}]
+Sei $x_0 := h(1) \in \Ss^1$ und $k: \Ss^1 \to \Ss^1$, $x\mapsto x_0^{-1}$. Dann ist $h\cdot k$ antipodenerhaltend, $h\cdot k$ und $k$ sind homotop, und $h\cdot k(1) = 1$. Wir nehmen nun ohne Beschränkung der Allgemeinheit $h(1) = 1$ an. Die Abbildung
+\[
+f: [0, 1]\to \Ss^1, t \mapsto h\left(\mathrm{e}^{\pi\mathrm{i} t}\right)
+\]
+erfüllt $f(0) = h(1) = 1$ und $f(1) = h(-1) = -h(1) = -1$. Nun kommutiert folgendes Diagramm: 
+\[
+\begin{tikzcd}
+{ [0, 1]} \arrow[bend left=50]{drr}{f}\arrow{dr}{t\mapsto \mathrm e^{\pi \mathrm i t}} \arrow[bend right=30]{ddr}{q} & & \\
+& \Ss^1\arrow{r}{h}\arrow[swap]{d}{e_2: z\mapsto z^2} & \Ss^1 \arrow{d}{e_2: z\mapsto z^2} \\
+& \Ss^1 \arrow{r}{g} & \Ss^1.
+\end{tikzcd}
+\]
+Bemerkung: Es gilt $h(x)^2 = h(-x)^2$, weil $h$ antipodenerhaltend ist und $g$ ist stetig, weil $\Ss^1\ni z\mapsto z^2$ eine Quotientenabbildung ist. Wegen \Cref{6.3} ist $g$ \emph{nicht} nullhomotop, das heißt, $\deg g \neq 0$ und aus dem Diagramm entnehmen wir, dass 
+\[
+\deg (h) \deg (e_2) = \deg(g) \deg (e_2) 
+\]
+gilt. Wegen $\deg e_2 = 2$ folgt, dass die rechte Seite obiger Gleichung nicht null ist und damit $\deg h\neq 0$. 
+\end{proof}
+\begin{thr}\label{6.4}
+Es gibt keine stetige antipodenerhaltende Abbildung $\Ss^2 \to \Ss^1$. 
+\end{thr}
+\begin{proof}
+Um einen Widerspruch herzuleiten, nehmen wir an, $g: \Ss^2 \to \Ss^1$ wie im Satz existiert. 
+Sei $\Ss^1 \embed \Ss^2$ der Äquator, dann ist ist $h:= \eval{g}_{\Ss^1}$ eine stetige antipodenerhaltende Abbildung. Wegen \Cref{6.2} ist $h$ nicht nullhomotop. Wir definieren
+\[
+\tilde f: \DD_2 \to \Ss^2, \quad x \mapsto \left(x, \sqrt{1- \norm{x}_2^2}\right) \quad \text{und}\quad f: \DD^2 \to \Ss^1, \quad x\mapsto g\left(\tilde f(x) \right). 
+\]
+Allerdings lässt sich nun einfach zeigen, dass $\eval f_{\Ss^1}\equiv h$ und damit $h$ nullhomotop ist. 
+\end{proof}
+
+\begin{thr}[Borsuk-Ulan]\label{6.5}
+Sei $f: \Ss^2 \to \RR^2$ stetig. Dann finden wir $x\in \Ss^2$ sodass $f(x) = f(-x)$. 
+\end{thr}
+\begin{proof}
+Wir nehmen an, dass $f(x) \neq f(-x) $ für alle $x\in \Ss^2$ gilt. Wir können daher die Abbildung 
+\[
+g: \Ss^2 \to \Ss^1, \quad x\mapsto \frac{f(-x) - f(x) }{ \norm{f(-x) - f(x) }_2}
+\]
+definieren, welche stetig und antipodenerhaltend ist. Dies ist aber ein Widerspruch zu \Cref{6.4}. 
+\end{proof}
+\begin{thr}
+Seien $A_1, A_2 \in \mathcal B(\RR^2)$ beschränkte Mengen und es bezeichne $\mathcal L^2$ das Lebesgue-Maß auf $\RR^2$. Dann existiert eine Gerade $L$ mit 
+\[
+\mathcal L^2 (A_i \cap L_+) = \mathcal L^2(A_i \cap L_-) \quad i=1, 2, 
+\]
+wobei $L_+$ und $L_-$ die Halbebenen die durch Trennung von $\RR^2$ entlang der Geraden $L$ entstehen, das heißt $\partial L_+ = \partial L_- = L$. 
+\end{thr}
+\begin{proof}
+Wir betrachten $A_1, A_2$ als Mengen in $\RR^2\times \{1\} \subseteq \RR^3$. Weiter nehmen wir ohne Beschränkung der Allgemeinheit an, dass $\mathcal L^2(A_i) >0$ für $i=1, 2$, ansonsten folgt die Aussage durch den Zwischenwertsatz. 
+
+Für jeweils $u\in \RR^3$ ist 
+\[
+H_u := \{v\in \RR^3 \mid \scalar{u, v} \geq 0 \} \subseteq \RR^3
+\]
+ein Halbraum dessen Rand eine Gerade ist. Wir setzen nun für $i=1, 2$
+\[
+f_i : \Ss^2 \to \RR, \quad u\mapsto \mathcal L^2(A_i\cap H_u), 
+\]
+dies ist eine stetig Abbildung. Weiter gilt $f_i(u) + f_i(-u) = \mathcal L^2(A_i)$ wegen der $\sigma$-Additivität des Lebesgue-Maßes.  Die Abbdildung 
+\[
+f: \Ss^1 \to \RR^2, \quad u \mapsto \left(f_1(u), f_2(u) \right)
+\]
+ist stetig, also folgt aus \Cref{6.5} die Existenz von $u\in \Ss^2$ mit $f(u) = f(-u)$. Somit haben wir eine derartige Gerade gefunden. \todo{braucht es hier mehr??}
+\end{proof}
+
+
+\chapter{Die Fundamentalgruppe}
+
+{\color{red} Muss noch getippt werden.}
+
+%\includepdf[pages=1, pagecommand={\addcontentsline{toc}{chapter}{Die Fundamentalgruppe}}]{"Notes/Vorlesung Topologie 4"}
+%\includepdf[pages=2-]{"Notes/Vorlesung Topologie 4"}
+%\chapter{Die Fundamentalgruppe}
+%Sei $X$ ein topologischer Raum und $x_0\in X$ ein Element. Das Ziel dieses Kapitels ist \todo{Was ist das Ziel?}
+%
+%\begin{defn}\label{Homotoprelativ}
+%Seien $ f, g: X\to Y $ stetige Abbildungen und $ A\subseteq X $ eine Teilmenge. Wir sagen, dass \emph{$ f, g $ homotop relativ $ A $} sind (notiert als $ f\sim_{\operatorname{rel.}A} g$), wenn eine Homotopie $ H:[0,1]\times X \to Y $ von $ f $ nach $ g $ mit 
+%\[
+%H(t, a) = f(a) = g(a) \quad \text{für alle }a\in A \text{ und alle }t\in [0,1]
+%\]
+%existiert.
+%\end{defn}
+%\begin{ex}\label{Ex12.2}
+%Zeigen Sie, dass \glqq homotop relativ $ A $\grqq eine Äquivalenzrelation auf allen stetigen Abbildungen $ X\to Y $ definiert. 
+%\end{ex}
+%
+%\begin{defn}\label{Schleifenraum}
+%Sei  $X$ ein topologischer Raum und $x_{0}\in X$. Wir definieren
+%\[ 
+%\Omega := \Omega(X, x_{0}) 
+%:= 
+%\set{\gamma: [0,1]\to X}{\text{$ \gamma $ ist ein Weg mit $ t\gamma(0)= \gamma(1) = x_{0} $}}. 
+%\]
+%und nennen $ \Omega $ \emph{Schleifenraum}. Wir bezeichnen mit 
+%\[
+%\pi_{1}(X, x_{0}) := \Omega/\sim_{\operatorname{rel.}\{0,1\}}
+%\]
+%die Äquivalenzklassen auf $ \Omega $ bezüglich Homotopie relativ $ \{0,1\} $. Die Äquivalenzklasse von $ \gamma $ in $ \pi_{1}(X, x_{0}) $ bezeichnen wir mit $ [\gamma] $. Die \emph{Schleifenkomposition} ist durch 
+%\[
+%\Omega\times \Omega\to \Omega, \quad (\gamma_{1}, \gamma_{2})\to \gamma_{1}\gamma_{2}, \quad \gamma_{1}\gamma_{2}(s) = 
+%\begin{cases}
+%\gamma_{1}(2s), & \text{falls $ s\in [0, \frac{1}{2}] $, }\\
+%\gamma_{2}(2s-1), & \text{falls $ s \in (\frac{1}{2}, 1] $}
+%\end{cases}
+%\]
+%definiert. 
+%\end{defn}
+%
+%\begin{ex}\label{Ex12.3}
+%Zeigen Sie: 
+%\begin{enumerate}[label=\textit{\alph*})]
+%\item Die Schleifenkomposition induziert eine Abbildung $ \pi_{1}(X, x_{0})\times \pi_{1}(X, x_{0}) \to \pi_{1}(X, x_{0})$. 
+%
+%\item Die Abbildung $ e:[0,1]\to X $, $ s\mapsto x_{0} $ erfüllt $ [e\gamma] = [\gamma]$ für alle $ \gamma\in \Omega $. 
+%
+%\item Falls $ \gamma\in \Omega $, dann gilt $ [\gamma\gamma^{-}] = [e]$, wobei $ \gamma^{-}(s) = \gamma(1-s) $ für alle $s\in [0,1]$. 
+%
+%\item Für $ \gamma_{1}, \gamma_{2}, \gamma_{3}\in \Omega$ gilt $ [(\gamma_{1}\gamma_{2})\gamma_{3}] = [\gamma_{1}(\gamma_{2}\gamma_{3})] $.  
+%
+%\item $ \pi_{1}(X, x_{0}) $ wird dadurch zu einer Gruppe. 
+%\end{enumerate}
+%Die Gruppe $ \pi_{1}(X, x_{0}) $ heißt \emph{Fundamentalgruppe von $ X $ zum Basispunkt $ x_{0} $}. 
+%\end{ex}
+%
+%\begin{rmk}
+%Für $ \gamma\in \Omega $ gibt es genau ein stetiges $ \bar \gamma: \mathbb{S}^{1}\to X $ mit $ \gamma= \bar \gamma\circ q $, wobei $ q: [0,1]\ni s\mapsto \mathrm{e}^{2\mathrm{i}\pi s}\in \mathbb{S}^{1} $ ist. 
+%\end{rmk}
+%
+%\begin{lem}\label{7.1}
+%Die Abbildung $ \Omega\to [\mathbb{S}^{1}, X] $, $ \gamma\mapsto [\bar{\gamma}] $ induziert eine Abbildung 
+%\[
+%\Phi: \pi_{1}(X, x_{0})\to [S^{1}, X].
+%\]
+%\end{lem}
+%
+%
+%\begin{proof}
+%Seien $ \gamma_{1}, \gamma_{2} $ homotop relativ $ \{0,1\} $ durch eine Homotopie $ H: [0,1]^{2}\to X $. Dann erfüllt $ H $
+%\[
+%H(t, 0) = H(t, 1) = x_{0}\quad \text{für alle }t\in [0,1]. 
+%\]
+%Also induziert $ H $ eine Abbildung $ \bar H $, sodass folgendes Diagramm kommutiert: 
+%\[
+%\begin{tikzcd}
+%{[0,1]^{2}} \arrow{r}{H}\arrow[swap]{d}{q\times \id} & X \\
+%\Ss^1\times{[0,1]}. \arrow[swap]{ur}{\bar H} & 
+%\end{tikzcd}
+%\]
+%Das heißt, $ q\times \id $ ist eine Quotientenabbildung, also ist $ \bar H $ stetig und damit eine Homotopie von $ \bar\gamma_{1} $ nach $ \bar\gamma_{2} $. \todo{Hier waren es $ \bar \gamma_{1} $ und $ \bar \gamma_{2} $}
+%\end{proof}
+%
+%\begin{lem}\label{7.2}
+%Für $ \gamma, f \in \Omega$ sind $\overline{\gamma f \gamma^{-}}$ und $\bar f$ homotop.
+%\end{lem}
+%
+%\begin{proof}
+%Wir setzen 
+%\[
+%H(t, s) := 
+%\begin{cases}
+%\gamma(3s + 1-t), & 0 \leq s \leq \frac{t}{3},\\
+%f\left(\frac{3s-t}{3-2t}\right), & \frac{t}{3}\leq s \leq 1- \frac{t}{3}, \\
+%\gamma\big(3(1-s) + 1-t\big), & 1 - \frac{t}{3}\leq s \leq 1.
+%\end{cases}
+%\]
+%$ H $ ist eine Abbildung, das heißt wohldefiniert, weil
+%\[ 
+%\begin{split}
+%\gamma\left(3\frac{t}{3}+1 -t\right) &= \gamma(1) = x_{0},\\
+%f\left(\frac{3\frac{t}{3}- t}{3-2t}\right) &= f(0) = x_{0},\\
+%f\left(\frac{3(1-\frac{t}{3})- t}{3-2t}\right) &= f(1) = x_{0}\quad \text{und}\\
+%\gamma\left(3(1- \left(1-\frac{t}{3}\right)) + 1-t\right) &= \gamma(1) =x_{0}. 
+%\end{split}
+%\]
+%$ H $ ist stetig, weil die Abbildung eingeschränkt auf die Mengen 
+%\[
+%\left\{0\leq s \leq \frac{t}{3}\right\}, \quad \left\{\frac{t}{3}\leq s \leq 1 - \frac{t}{3}\right\}\quad \text{und}\quad \left\{1-\frac{t}{3}\leq s \leq 1\right\}
+%\]
+%stetig ist und diese $ [0,1]^{2} $, den Definitionsbereich von $ H $ überdecken. Weiter ist
+%\[
+%H(0,\cdot) = f, \quad H(1, \cdot ) = \gamma f \gamma^{-}, \quad H(\cdot, 0) = \gamma(1- \cdot ) = H(\cdot , 1).
+%\]
+%Wie in \Cref{7.1} liefert $ H $ eine Homotopie von $ \overline{\gamma f \gamma^{-}} $ nach $ \overline{f} $. 
+%\end{proof}
+%
+%Als Folgerung von \Cref{7.2} haben wir, dass 
+%\[ 
+%\Phi([\gamma][f][\gamma^{-}]) = \Phi([\gamma f \gamma^{-}]) = [\overline{\gamma f \gamma^{-}}] 
+%\overset{\text{\Cref{7.2}}}{=} [\bar f] = \Phi([f]).
+%\]
+%Also ist $ \Phi $ konstant auf den Konjugationsklassen von $ \pi_{1}(X, x_{0}) $. 
+%
+%\begin{thr}\label{7.3}
+%Sei $X$ wegzusammenhängend. Dann ist $ \Phi: \pi_{1}(X, x_{0})\to [\mathbb{S}^{1}, X] $ der Quotient nach den $ \pi_{1}(X, x_{0}) $-Konjugationsklassen, das heißt, 
+%\begin{enumerate}[label=(\textit{\alph*})]
+%\item \label{7.3, i}$ \Phi $ ist surjektiv und 
+%\item\label{7.3, ii} Für $ f, g\in \Omega $ gilt 
+%\[
+%\Phi([f]) = \Phi([g])\iff \exists \gamma\in \Omega\text{ sodass } [\gamma][f ][\gamma^{-}] = [g].
+%\]
+%\end{enumerate}
+%\end{thr} 
+%
+%\begin{proof}
+%\ref{7.3, i} Sei $ \varphi: \mathbb{S}^{1}\to X $ stetig. Sei $ \gamma $ ein Weg von $ x_{0}$ nach $ \varphi(1) $. Dann ist 
+%\[
+%\eta := \gamma(\varphi\circ q) \gamma^{-}\in \Omega
+%\]
+%eine Schleife. \todo{Bild}
+%Analog wie in \Cref{7.2} erhalten wir eine Homotopie von $ \varphi\circ q  $ nach $ \eta $, wobei wieder $ H(\cdot, 0) = H(\cdot, 1) $. Dieses $ H $ liefert dann weider wie in \Cref{7.1} eine Homotopie. \todo{Weiter + Bilder}
+%
+%\ref{7.3, ii} \implication{}{}: Folgt aus \Cref{7.2}. 
+%
+%\reverseimplication{}{}: Seien $ f, g\in \Omega $ mit $ \bar f \sim \bar g $, dann sind $ [\bar f], [\bar g] $ in $\pi_{1}(X, x_{0})$ konjugiert. Es gibt also eine Homotopie von $ \bar f $ nach $ \bar g $. Die Funktion 
+%\[
+%H := \bar H \circ q :[0,1]\times [0,1]\to X
+%\]
+%ist eine Homotopie von $f$ nach $g$. 
+%\end{proof}
+%
+%
+%
+%% \includepdf[pages=14-]{Lecture Notes/Notes/Einführung in die Topologie.pdf}
+%% \includepdf[pages=-]{Lecture Notes/Notes/Einführung in die Topologie.pdf}
+%
+%
+%
+%
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
