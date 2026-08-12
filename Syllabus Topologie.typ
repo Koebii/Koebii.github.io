@@ -5,7 +5,7 @@
   #pad(x: -1.2cm, y: -0.75cm)[
     #image("Unibaslogo.svg", height: 1cm)
   ]
-     #h(1fr) *Vorlesung: Topologie*    
+     #h(1fr) *Vorlesung: Einführung in die Topologie*    
     #line(length: 100%)
 ]
 )
@@ -14,8 +14,8 @@
     #line(length: 100%)
     Weitere Informationen finden Sie auf #link("https://adam.unibas.ch")[ADAM] oder im #link("https://vorlesungsverzeichnis.unibas.ch/de/vorlesungsverzeichnis?id=283925")[Vorlesungsverzeichnis].
 ])
-// #show link: set text(fill: rgb("#0000ff"))
-// #show link: underline
+#show link: set text(fill: rgb("#0000ff"))
+#show link: underline
 
 
 
@@ -36,7 +36,7 @@
   - Alessio Cagnini
 ]
 )
-#title("Topologie")
+#title("Einführung in die Topologie")
 == Inhalt der Vorlesung
 Die Topologie (scherzhaft auch Gummigeometrie genannt) befasst sich mit qualitativen Eigenschaften geometrischer Objekte, präziser mit Eigenschaften, die unter stetigen Verformungen erhalten bleiben. Als Wissenschaft entwickelte sie sich vor allem im 20. Jahrhundert und erwies sich seitdem in so gut wie allen mathematischen Teilgebieten als hilfreiches Werkzeug. Für das Studium der allermeisten Gebiete der modernen Mathematik ist also ein gutes Verständnis der Topologie unabdingbar.
 
