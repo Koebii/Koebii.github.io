@@ -21,4 +21,6 @@ Sammlung von Vorlesungsmitschriften, die ich über die Jahre getippt habe.
 ### FS 2026
 - [Selected Topics in Probability Theory](https://koebii.github.io//main.pdf). Second part of the Master's lecture in probability theory (English). *Notes are incomplete and not revised, hence contain a lot of typos as well.*
 
+# Vorbereitung Masterprüfungen
 
+- [Liste mit Fragen für die Masterprüfung in Numerik](https://koebii.github.io//Fragen_Masterprüfung_Numerical_Methods_for_Waves.pdf)
