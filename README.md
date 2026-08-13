@@ -23,4 +23,4 @@ Sammlung von Vorlesungsmitschriften, die ich über die Jahre getippt habe (und s
 
 # Vorbereitung Masterprüfungen
 
-- [Liste mit Fragen für die Masterprüfung in Numerik](https://koebii.github.io//Fragen_Masterprüfung_Numerical_Methods_for_Waves.pdf)
+- [Liste mit Fragen für die Masterprüfung in Numerik](https://koebii.github.io//Fragen_Numerik.pdf)
