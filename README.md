@@ -24,3 +24,5 @@ Sammlung von Vorlesungsmitschriften, die ich über die Jahre getippt habe (und s
 # Vorbereitung Masterprüfungen
 
 - [Liste mit Fragen für die Masterprüfung in Numerik](https://koebii.github.io//Fragen_Numerik.pdf)
+- [Fragensliste für Numerik der partiellen Differentialgleichungen](https://koebii.github.io//Questions_Numerical_Methods_for_PDEs.pdf)
+- [Fragensliste für numerische Verfahren zur Wellenausbreitung](https://koebii.github.io//Questions_Numerical_Methods_for_Wave_Propagation.pdf)
